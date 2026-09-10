@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
 
-@Component
 public class MailNotificatorImpl implements MailNotificator {
     private static final Logger log = LoggerFactory.getLogger(MailNotificatorImpl.class);
 

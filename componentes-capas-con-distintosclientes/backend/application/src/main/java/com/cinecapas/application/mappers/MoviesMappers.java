@@ -2,6 +2,7 @@ package com.cinecapas.application.mappers;
 
 
 import com.cinecapas.application.dto.MovieDto;
+import com.cinecapas.application.dto.StoreMovieDto;
 import com.cinecapas.domain.enums.Formats;
 import com.cinecapas.domain.models.MoviesModel;
 
@@ -17,6 +18,22 @@ public final class MoviesMappers {
 
         return MoviesModel.builder()
                 .id(dto.getId())
+                .titulo(dto.getTitulo())
+                .sinopsis(dto.getSinopsis())
+                .clasificacion(dto.getClasificacion())
+                .duracionMinutos(dto.getDuracionMinutos())
+                .rating(dto.getRating())
+                .posterUrl(dto.getPosterUrl())
+                .formatos(formats)
+                .genero(dto.getGenero())
+                .build();
+    }
+
+    public static MoviesModel toModel(StoreMovieDto dto){
+        Set<Formats> formats = dto.getFormatos().stream()
+                .map(Formats::valueOf).collect(Collectors.toSet());
+
+        return MoviesModel.builder()
                 .titulo(dto.getTitulo())
                 .sinopsis(dto.getSinopsis())
                 .clasificacion(dto.getClasificacion())

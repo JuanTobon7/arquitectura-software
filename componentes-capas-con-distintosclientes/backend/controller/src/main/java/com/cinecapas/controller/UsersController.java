@@ -23,6 +23,6 @@ public class UsersController {
 
     @PostMapping("/login")
     public UserDto login(@Valid @RequestBody LoginUserDto dto) {
-        return servicio.autenticar(dto);
+        return servicio.autenticar(dto.getEmail(), dto.getPassword());
     }
 }

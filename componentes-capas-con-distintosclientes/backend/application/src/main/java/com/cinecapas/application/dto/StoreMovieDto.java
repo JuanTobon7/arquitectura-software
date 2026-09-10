@@ -1,9 +1,11 @@
 package com.cinecapas.application.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class StoreMovieDto {
     @NotBlank(message = "El título es obligatorio")
     String titulo;

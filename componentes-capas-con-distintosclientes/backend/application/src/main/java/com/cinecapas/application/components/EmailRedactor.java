@@ -1,14 +1,20 @@
 package com.cinecapas.application.components;
 
 import com.cinecapas.application.dto.UserDto;
-import com.cinecapas.domain.enums.ReservationStatus;
-import com.cinecapas.domain.models.UsersModel;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 public class EmailRedactor {
     public record Correo(String asunto, String cuerpo) {
+    }
+
+    public record FuncionInfo(LocalDateTime fechaHora, String sala, String formato, double precio) {
+    }
+
+    public record ReservaConfirmada(String nombreCliente, String codigo, List<String> asientos) {
     }
 
     private static final DateTimeFormatter FECHA = DateTimeFormatter
@@ -33,7 +39,7 @@ public class EmailRedactor {
                 """.formatted(usuario.getNombre(), usuario.getEmail()));
     }
 
-    public static Correo boleta(ReservationStatus reserva, FuncionInfo funcion, String tituloPelicula) {
+    public static Correo boleta(ReservaConfirmada reserva, FuncionInfo funcion, String tituloPelicula) {
         double total = funcion.precio() * reserva.asientos().size();
         return new Correo(
                 "Tu boleta MICOS HAKARI — " + reserva.codigo(),

@@ -1,6 +1,7 @@
 package com.cinecapas.domain.cases;
 
 import com.cinecapas.domain.enums.Formats;
+import com.cinecapas.domain.mappers.MoviesMappers;
 import com.cinecapas.domain.models.MoviesModel;
 import com.cinecapas.domain.ports.in.InCatalogMovies;
 import com.cinecapas.persistence.repos.MoviesModelDaoRepository;
@@ -18,17 +19,20 @@ public class CatalogMoviesUseCase implements InCatalogMovies {
 
     @Override
     public MoviesModel registrar(MoviesModel pelicula) {
-
-        return moviesRepository.saveAll(pelicula);
+        var dao = moviesRepository.save(MoviesMappers.toDao(pelicula));
+        return MoviesMappers.toModel(dao);
     }
 
     @Override
     public List<MoviesModel> buscar(String genero, Formats formato) {
-        return moviesRepository.buscarTodas();
+        return moviesRepository.findAll().stream()
+                .map(MoviesMappers::toModel)
+                .toList();
     }
 
     @Override
     public Optional<MoviesModel> porId(long id) {
-        return moviesRepository.buscarPorId(id);
+        return moviesRepository.findById(id)
+                .map(MoviesMappers::toModel);
     }
 }
