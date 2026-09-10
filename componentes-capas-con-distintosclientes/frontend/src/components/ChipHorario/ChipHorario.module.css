@@ -1,0 +1,22 @@
+.chip {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #101014;
+  background: #f2f2f4;
+  border-radius: 3px;
+  padding: 0.4rem 1rem;
+  transition: all var(--transicion);
+}
+
+.chip:hover {
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--border-accent), var(--glow-accent);
+}
+
+.seleccionado {
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: var(--glow-accent-fuerte);
+}

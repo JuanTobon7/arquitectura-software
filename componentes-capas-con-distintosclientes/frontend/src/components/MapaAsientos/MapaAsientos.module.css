@@ -1,0 +1,104 @@
+.contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pantalla {
+  width: min(80%, 460px);
+  padding: 0.45rem 0;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.5em;
+  color: var(--text-muted);
+  border-top: 3px solid var(--color-accent);
+  border-radius: 50% 50% 0 0 / 90% 90% 0 0;
+  box-shadow: 0 -10px 30px -6px var(--color-accent-soft);
+}
+
+.sala {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 0.5rem;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.etiquetaFila {
+  width: 18px;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.asiento {
+  width: 26px;
+  height: 24px;
+  border-radius: 6px 6px 3px 3px;
+  background: var(--bg-elevado);
+  border: 1px solid var(--border-sutil);
+  transition: all var(--transicion);
+}
+
+.asiento:hover:not(:disabled) {
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.seleccionado {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: var(--glow-accent-fuerte);
+}
+
+.ocupado {
+  background: #2a2a2e;
+  border-color: transparent;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.leyenda {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.leyenda span {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.leyenda i {
+  width: 14px;
+  height: 13px;
+  border-radius: 4px 4px 2px 2px;
+  display: inline-block;
+}
+
+.puntoLibre {
+  background: var(--bg-elevado);
+  border: 1px solid var(--border-sutil);
+}
+
+.puntoSeleccion {
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.puntoOcupado {
+  background: #2a2a2e;
+  opacity: 0.6;
+}

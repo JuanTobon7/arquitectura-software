@@ -1,0 +1,169 @@
+.pagina {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: calc(var(--nav-altura) + 3rem) 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 70vh;
+}
+
+.cabecera {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.9rem;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.titulo {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.volver {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  transition: color var(--transicion);
+}
+
+.volver:hover {
+  color: var(--color-accent);
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-sutil);
+  border-radius: calc(var(--radio) * 2);
+  padding: 2rem;
+}
+
+.formulario,
+.confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  justify-content: center;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.campo span {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+}
+
+.campo input {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-sutil);
+  border-radius: var(--radio);
+  color: var(--text-primary);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.campo input:focus {
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.resumen {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+}
+
+.botonPrimario {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--radio);
+  background: var(--color-accent);
+  color: #fff;
+  box-shadow: var(--glow-accent);
+  transition: all var(--transicion);
+}
+
+.botonPrimario:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+  box-shadow: var(--glow-accent-fuerte);
+}
+
+.botonPrimario:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.botonSecundario {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  padding: 0.75rem 1.4rem;
+  border-radius: var(--radio);
+  border: 1px solid var(--border-accent);
+  color: var(--color-accent);
+  transition: all var(--transicion);
+}
+
+.botonSecundario:hover {
+  background: var(--color-accent-faint);
+  box-shadow: var(--glow-accent);
+}
+
+.confirmacion {
+  text-align: center;
+  border: 1px dashed var(--border-accent);
+  border-radius: var(--radio);
+  padding: 1.6rem;
+  background: var(--color-accent-faint);
+}
+
+.codigo {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent-fuerte);
+}
+
+.estado {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error {
+  color: var(--color-accent);
+  background: var(--color-accent-faint);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radio);
+  padding: 0.9rem 1.2rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 780px) {
+  .panel {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+}

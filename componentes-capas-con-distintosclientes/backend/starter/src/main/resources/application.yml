@@ -1,0 +1,119 @@
+# =============================================================
+# MICOS HAKARI — configuración de la aplicación
+#
+# Módulo padre (backend): contiene @SpringBootApplication.
+# La configuración se organiza por concerns de cada módulo:
+#
+#   controller  → CORS, puerto del servidor
+#   persistence → datasource, JPA, SQL init
+#   application → correo SMTP, nombre de la app
+#
+# La base de datos se elige en tiempo de arranque con la propiedad
+#   spring.datasource.db = mysql | sql | h2
+# (por defecto se lee de la variable DB_TIPO del archivo .env).
+#
+# [SOLID - LSP] Los adaptadores de persistencia implementan los puertos del
+# dominio; cambiar de motor (MySQL <-> H2) es SOLO configuración: el resto
+# del sistema ve el mismo contrato y el mismo comportamiento.
+#
+# Los valores de conexión y correo se toman del archivo .env (raíz del
+# backend), cargado con spring.config.import.
+# =============================================================
+spring:
+  application:
+    name: micos-hakari
+
+  # --- Selección dinámica de base de datos (LSP) ---
+  # spring.datasource.db = mysql | sql | h2  (default: mysql)
+  datasource:
+    db: ${DB_TIPO:mysql}
+
+  # Activa el perfil mysql|h2 según spring.datasource.db (cambio dinámico).
+  profiles:
+    active: ${spring.datasource.db:mysql}
+    group:
+      # "sql" es un alias de "mysql"
+      sql: mysql
+
+  # Carga el archivo .env (raíz del backend) como propiedades.
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
+
+  # --- persistence: JPA / Hibernate ---
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    # data.sql se ejecuta DESPUÉS de crear el esquema JPA
+    defer-datasource-initialization: true
+    # En Spring Boot 4.x, @EntityScan fue removido; se configura aquí
+    entity-packages: com.cinecapas.persistence.daos
+
+  sql:
+    init:
+      mode: always
+
+  # --- application: Correo SMTP (JavaMail) ---
+  # Con spring.mail.host con valor real - envio SMTP; sin el (vacio) - consola.
+  # MAIL_HOST se toma del .env (raiz del backend); sin .env se usa la consola.
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:YOUR_GMAIL_APP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+# --- controller: Servidor ---
+server:
+  port: 8080
+
+# --- controller: CORS ---
+# --- application: Correo remitente ---
+app:
+  cors:
+    # Origen del frontend React (Vite). Cambiar aquí, no en el código.
+    origen: ${FRONTEND_ORIGIN:http://localhost:5173}
+  correo:
+    remitente: ${MAIL_FROM:your-email@gmail.com}
+
+---
+# =============================================================
+# Perfil MySQL (por defecto) — persistence module
+# =============================================================
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:micos_hakari}?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# =============================================================
+# Perfil H2 (en memoria, compatible MySQL) — persistence module
+# =============================================================
+spring:
+  config:
+    activate:
+      on-profile: h2
+
+  datasource:
+    url: jdbc:h2:mem:micos_hakari;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+
+  h2:
+    console:
+      enabled: true

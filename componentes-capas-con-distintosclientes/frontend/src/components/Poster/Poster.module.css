@@ -1,0 +1,11 @@
+.poster {
+  width: 150px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radio);
+  border: 1px solid var(--border-sutil);
+  flex-shrink: 0;
+  display: block;
+
+  align-self: flex-start;
+}

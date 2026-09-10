@@ -1,0 +1,54 @@
+.lateral {
+  position: fixed;
+  left: 0;
+  top: var(--nav-altura);
+  bottom: 0;
+  width: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  border-right: 1px solid var(--border-sutil);
+  z-index: 50;
+}
+
+.texto {
+  writing-mode: vertical-rl;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  color: var(--text-muted);
+}
+
+.linea {
+  width: 1px;
+  height: 42px;
+  background: var(--border-sutil);
+}
+
+.icono {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-sutil);
+  border-radius: var(--radio);
+  transition: all var(--transicion);
+}
+
+.icono:hover {
+  color: var(--color-accent);
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-accent);
+}
+
+@media (max-width: 1100px) {
+  .lateral {
+    display: none;
+  }
+}

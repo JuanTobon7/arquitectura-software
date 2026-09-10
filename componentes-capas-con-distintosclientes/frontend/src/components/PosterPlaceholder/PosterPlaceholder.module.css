@@ -1,0 +1,49 @@
+.poster {
+  position: relative;
+  width: 150px;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radio);
+  border: 1px solid var(--border-sutil);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.9rem;
+  flex-shrink: 0;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    rgba(0, 0, 0, 0.18) 3px 4px
+  );
+  pointer-events: none;
+}
+
+.genero {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.titulo {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.marca {
+  margin-top: 0.5rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.35em;
+  color: rgba(255, 255, 255, 0.45);
+}

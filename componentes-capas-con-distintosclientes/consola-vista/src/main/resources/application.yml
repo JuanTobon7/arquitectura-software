@@ -1,0 +1,79 @@
+# =============================================================
+# Consola-vista — configuración
+# Replica la misma configuración de datasource que el backend/starter
+# para poder usar los mismos repositorios de persistencia.
+# =============================================================
+spring:
+  application:
+    name: consola-vista
+
+  # Seleccionar perfil: mysql | h2
+  profiles:
+    active: ${DB_TIPO:h2}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    defer-datasource-initialization: true
+    entity-packages: com.cinecapas.persistence.daos
+
+  sql:
+    init:
+      mode: always
+
+  # Correo SMTP (consola si host vacío)
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:YOUR_GMAIL_APP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: 0  # Puerto aleatorio para evitar conflictos con el backend
+
+app:
+  correo:
+    remitente: ${MAIL_FROM:your-email@gmail.com}
+
+---
+# =============================================================
+# Perfil MySQL
+# =============================================================
+spring:
+  config:
+    activate:
+      on-profile: mysql
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:micos_hakari}?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# =============================================================
+# Perfil H2 (en memoria)
+# =============================================================
+spring:
+  config:
+    activate:
+      on-profile: h2
+
+  datasource:
+    url: jdbc:h2:mem:micos_hakari;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+
+  h2:
+    console:
+      enabled: true

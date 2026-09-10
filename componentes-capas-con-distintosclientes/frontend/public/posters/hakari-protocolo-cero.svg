@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#3b0d1e"/>
+      <stop offset="0.65" stop-color="#0c0b10"/>
+      <stop offset="1" stop-color="#080809"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.32" r="0.55">
+      <stop offset="0" stop-color="#ff2d55" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ff2d55" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="none"/>
+      <rect y="3" width="4" height="1" fill="#000" opacity="0.25"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="600" fill="url(#bg)"/>
+  <rect width="400" height="600" fill="url(#glow)"/>
+  <g opacity="0.95">
+  <g stroke="#ff2d55" stroke-width="14" stroke-linecap="square">
+    <line x1="120" y1="120" x2="280" y2="300"/><line x1="280" y1="120" x2="120" y2="300"/>
+  </g>
+  <g stroke="#ff7a95" stroke-width="2" opacity="0.6">
+    <line x1="108" y1="108" x2="292" y2="312"/><line x1="292" y1="108" x2="108" y2="312"/>
+  </g>
+  <g fill="none" stroke="#ff2d55" stroke-width="1" opacity="0.4">
+    <polygon points="200,40 235,60 235,100 200,120 165,100 165,60"/>
+    <polygon points="60,180 95,200 95,240 60,260 25,240 25,200"/>
+    <polygon points="340,180 375,200 375,240 340,260 305,240 305,200"/>
+    <polygon points="200,320 235,340 235,380 200,400 165,380 165,340"/>
+  </g>
+  <text x="200" y="218" font-family="Arial, sans-serif" font-size="11" fill="#f5f5f7" text-anchor="middle" letter-spacing="8" opacity="0.9">PROTOCOLO</text>
+</g>
+  <rect width="400" height="600" fill="url(#scan)"/>
+  <rect x="8" y="8" width="384" height="584" fill="none" stroke="#ff2d55" stroke-opacity="0.55" stroke-width="1.5"/>
+  <rect x="14" y="14" width="372" height="572" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+  <rect x="0" y="382" width="400" height="228" fill="#000" opacity="0.35"/>
+  <text x="30" y="472" font-family="Arial, sans-serif" font-size="12" font-weight="bold"
+        fill="#ff2d55" letter-spacing="6">ACCION</text>
+  <text x="30" y="500" font-family="Arial Black, Arial, sans-serif" font-size="30" font-weight="900" fill="#f5f5f7" letter-spacing="1">HAKARI:</text><text x="30" y="538" font-family="Arial Black, Arial, sans-serif" font-size="30" font-weight="900" fill="#f5f5f7" letter-spacing="1">PROTOCOLO</text><text x="30" y="576" font-family="Arial Black, Arial, sans-serif" font-size="30" font-weight="900" fill="#f5f5f7" letter-spacing="1">CERO</text>
+  <rect x="322" y="30" width="48" height="26" rx="3" fill="none" stroke="#ff2d55" stroke-width="1.5"/>
+  <text x="346" y="48" font-family="Arial, sans-serif" font-size="14" font-weight="bold"
+        fill="#ff2d55" text-anchor="middle">16+</text>
+  <text x="30" y="572" font-family="Arial, sans-serif" font-size="9" fill="#8a8a93"
+        letter-spacing="5">MICOS HAKARI · PRESENTA</text>
+</svg>

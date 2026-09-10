@@ -1,0 +1,99 @@
+.contenedor {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dias {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+
+  min-width: 0;
+}
+
+.dias::-webkit-scrollbar {
+  display: none;
+}
+
+.dia {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 72px;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radio);
+  position: relative;
+  color: var(--text-muted);
+  transition: color var(--transicion), background var(--transicion);
+}
+
+.dia:hover {
+  color: var(--text-secondary);
+  background: var(--bg-elevado);
+}
+
+.nombre {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: capitalize;
+}
+
+.numero {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.mes {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.activo {
+  color: var(--text-primary);
+}
+
+.activo::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent-fuerte);
+}
+
+.activo .numero {
+  color: var(--color-accent);
+}
+
+.flecha {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-sutil);
+  border-radius: 50%;
+  transition: all var(--transicion);
+}
+
+.flecha:hover:not(:disabled) {
+  color: var(--color-accent);
+  border-color: var(--border-accent);
+}
+
+.flecha:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

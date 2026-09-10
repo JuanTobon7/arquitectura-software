@@ -1,0 +1,203 @@
+.fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(5, 5, 6, 0.85);
+  backdrop-filter: blur(6px);
+  animation: aparecer 0.25s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reproductor {
+  position: relative;
+  width: min(860px, 100%);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-accent);
+  border-radius: calc(var(--radio) * 2);
+  box-shadow: var(--glow-accent-fuerte);
+  overflow: hidden;
+}
+
+.cerrar {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-sutil);
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.7);
+  transition: all var(--transicion);
+}
+
+.cerrar:hover {
+  color: var(--color-accent);
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.pantalla {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 45%, rgba(255, 45, 85, 0.16), transparent 70%),
+    #060607;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.3) 3px 4px);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.escena {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  font-family: var(--font-body);
+  letter-spacing: 0.5em;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: clamp(0.8rem, 2vw, 1.05rem);
+  padding: 0 1rem;
+}
+
+@keyframes escenaTexto {
+  0%, 100% { opacity: 0; transform: translateY(8px); }
+  8%, 18% { opacity: 1; transform: translateY(0); }
+  24% { opacity: 0; transform: translateY(-8px); }
+}
+
+.escena1 { animation: escenaTexto 12s linear infinite; }
+.escena2 { animation: escenaTexto 12s linear infinite 2.4s; }
+.escena3 { animation: escenaTexto 12s linear infinite 4.8s; }
+
+@keyframes escenaGrande {
+  0%, 58% { opacity: 0; transform: scale(0.92); }
+  64%, 86% { opacity: 1; transform: scale(1); }
+  94%, 100% { opacity: 0; transform: scale(1.04); }
+}
+
+.escenaTitulo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  animation: escenaGrande 12s linear infinite;
+}
+
+.equis {
+  color: var(--color-accent);
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  text-shadow: var(--glow-accent-fuerte);
+}
+
+.tituloGlitch {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.tituloGlitch::before,
+.tituloGlitch::after {
+  content: attr(data-texto);
+  position: absolute;
+  inset: 0;
+  opacity: 0.65;
+}
+
+.tituloGlitch::before {
+  color: var(--color-accent);
+  animation: glitch 0.9s steps(2) infinite;
+}
+
+.tituloGlitch::after {
+  color: #3d7bff;
+  animation: glitch 1.3s steps(2) infinite reverse;
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0, 0); clip-path: inset(0 0 60% 0); }
+  25% { transform: translate(3px, -2px); clip-path: inset(30% 0 30% 0); }
+  50% { transform: translate(-3px, 2px); clip-path: inset(60% 0 0 0); }
+  75% { transform: translate(2px, 1px); clip-path: inset(10% 0 70% 0); }
+}
+
+.subtitulo {
+  font-size: clamp(0.75rem, 1.6vw, 1rem);
+  letter-spacing: 0.7em;
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent);
+}
+
+@keyframes escenaFinal {
+  0%, 88% { opacity: 0; }
+  94%, 100% { opacity: 1; }
+}
+
+.escenaFinal {
+  animation: escenaFinal 12s linear infinite;
+  color: var(--text-muted);
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--border-sutil);
+}
+
+.play {
+  color: var(--color-accent);
+  font-size: 0.85rem;
+}
+
+.pista {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-elevado);
+  overflow: hidden;
+}
+
+.progreso {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  animation: progreso 12s linear infinite;
+}
+
+@keyframes progreso {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.tiempo {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}

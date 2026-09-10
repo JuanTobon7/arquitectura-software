@@ -1,0 +1,4 @@
+.pagina {
+  padding-top: var(--nav-altura);
+  min-height: 70vh;
+}

@@ -1,0 +1,34 @@
+.fila {
+  display: flex;
+  gap: 0.7rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.pill {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-sutil);
+  border-radius: 3px;
+  padding: 0.55rem 1.3rem;
+  transition: all var(--transicion);
+}
+
+.pill:hover {
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+}
+
+.activa {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  box-shadow: var(--glow-accent);
+}

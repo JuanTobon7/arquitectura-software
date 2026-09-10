@@ -1,0 +1,132 @@
+.pagina {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--nav-altura) + 3rem) 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 70vh;
+}
+
+.cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.9rem;
+  border-bottom: 2px solid var(--color-accent);
+  box-shadow: 0 12px 24px -18px var(--color-accent);
+}
+
+.titulo {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.contacto {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem;
+}
+
+.tarjetaContacto {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-sutil);
+  border-radius: calc(var(--radio) * 2);
+  padding: 1.1rem 1.2rem;
+  transition: border-color var(--transicion), box-shadow var(--transicion);
+}
+
+.tarjetaContacto:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--glow-accent);
+}
+
+.icono {
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent);
+}
+
+.tarjetaContacto h3 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tarjetaContacto p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.subtitulo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.5rem;
+}
+
+.detalle {
+  background: var(--bg-card);
+  border: 1px solid var(--border-sutil);
+  border-radius: var(--radio);
+  padding: 0.9rem 1.2rem;
+  transition: border-color var(--transicion);
+}
+
+.detalle[open] {
+  border-color: var(--border-accent);
+}
+
+.pregunta {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  list-style: none;
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.pregunta::-webkit-details-marker {
+  display: none;
+}
+
+.pregunta::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  color: var(--color-accent);
+  font-family: var(--font-display);
+}
+
+.detalle[open] .pregunta::after {
+  content: '−';
+}
+
+.respuesta {
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 720px) {
+  .contacto {
+    grid-template-columns: 1fr;
+  }
+}
