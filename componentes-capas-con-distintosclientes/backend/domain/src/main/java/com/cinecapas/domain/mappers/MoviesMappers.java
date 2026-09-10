@@ -29,13 +29,10 @@ public final class MoviesMappers {
 
     public static MoviesModel toModel(MoviesModelDao dao){
         Set<Formats> formats = Arrays.stream(dao.getFormatos().split(","))
-                .map(s -> {
-                    try {
-                        return Formats.valueOf(s.toUpperCase());
-                    } catch (IllegalArgumentException e) {
-                        return null;
-                    }
-                }).collect(Collectors.toSet());
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .flatMap(s -> Formats.desdeEtiqueta(s).stream())
+                .collect(Collectors.toSet());
 
         return MoviesModel.builder()
                 .id(dao.getId())

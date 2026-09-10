@@ -46,8 +46,10 @@ public final class MoviesMappers {
     }
 
     public static MovieDto toDto(MoviesModel model){
-        List<String> formats = model.getFormatos().stream()
-                .map(Enum::name).collect(Collectors.toList());
+        List<String> formats = model.getFormatos() == null ? List.of() :
+                model.getFormatos().stream()
+                .filter(java.util.Objects::nonNull)
+                .map(f -> f.etiqueta()).collect(Collectors.toList());
 
         return MovieDto.builder()
                 .id(model.getId())

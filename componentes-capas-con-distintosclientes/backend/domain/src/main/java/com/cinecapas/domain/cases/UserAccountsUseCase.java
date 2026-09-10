@@ -1,5 +1,6 @@
 package com.cinecapas.domain.cases;
 
+import com.cinecapas.domain.exceptions.ExistingEmail;
 import com.cinecapas.domain.mappers.UsersMappers;
 import com.cinecapas.domain.models.UsersModel;
 import com.cinecapas.domain.ports.in.InUserAccounts;
@@ -13,8 +14,14 @@ import org.springframework.stereotype.Service;
 public class UserAccountsUseCase implements InUserAccounts {
 
     private final UsersModelDaoRepository usersRepository;
+
     @Override
     public UsersModel registrar(String nombre, String email, String hashedPassword) {
+        if (usersRepository.findByEmail(email) != null) {
+                    throw new ExistingEmail(
+                "Ya existe un usuario con el email: " + email);
+        }
+
         UsersModel user = UsersModel.builder()
                 .nombre(nombre)
                 .email(email)
