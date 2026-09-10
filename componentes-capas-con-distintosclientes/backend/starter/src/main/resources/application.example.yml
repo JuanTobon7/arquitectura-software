@@ -1,0 +1,82 @@
+# =============================================================
+# MICOS HAKARI — configuración de la aplicación
+#
+# Copia este archivo como application.yml y completa los valores
+# de las variables de entorno (MAIL_PASSWORD, etc.).
+# =============================================================
+spring:
+  application:
+    name: micos-hakari
+
+  datasource:
+    db: ${DB_TIPO:mysql}
+
+  profiles:
+    active: ${spring.datasource.db:mysql}
+    group:
+      sql: mysql
+
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    defer-datasource-initialization: true
+    entity-packages: com.cinecapas.persistence.daos
+
+  sql:
+    init:
+      mode: always
+
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: 8080
+
+app:
+  cors:
+    origen: ${FRONTEND_ORIGIN:http://localhost:5173}
+  correo:
+    remitente: ${MAIL_FROM:}
+
+---
+# Perfil MySQL
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:micos_hakari}?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+# Perfil H2 (en memoria)
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:micos_hakari;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+  h2:
+    console:
+      enabled: true

@@ -1,0 +1,57 @@
+# =============================================================
+# MICOS HAKARI — Docker Compose (MySQL 8 + Backend Spring Boot)
+#
+# Copia este archivo como docker-compose.yml y completa los
+# valores de las variables de entorno (MAIL_PASSWORD, etc.).
+# =============================================================
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: micos-hakari-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: micos_hakari
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: micos-hakari-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # --- Base de datos ---
+      DB_TIPO: mysql
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DB: micos_hakari
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      # --- Correo SMTP (completar con tus credenciales) ---
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: "587"
+      MAIL_USERNAME: your-email@gmail.com
+      MAIL_PASSWORD: YOUR_GMAIL_APP_PASSWORD
+      MAIL_FROM: your-email@gmail.com
+      # --- Frontend ---
+      FRONTEND_ORIGIN: http://localhost:5173
+
+volumes:
+  mysql-data:

@@ -1,0 +1,8 @@
+# =============================================================
+# .gitignore raíz — archivos con credenciales
+# =============================================================
+
+# Archivos de configuración reales (usar los .example como plantilla)
+backend/starter/src/main/resources/application.yml
+consola-vista/src/main/resources/application.yml
+backend/docker-compose.yml
