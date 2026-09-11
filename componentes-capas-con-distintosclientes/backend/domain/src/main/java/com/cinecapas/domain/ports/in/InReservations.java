@@ -1,6 +1,5 @@
 package com.cinecapas.domain.ports.in;
 
-import com.cinecapas.domain.enums.ReservationStatus;
 import com.cinecapas.domain.models.ReservationModel;
 
 import java.util.List;
@@ -10,7 +9,6 @@ public interface InReservations {
     /**
      *
      * @param nueva
-     * @param status
      * @return
      */
     ReservationModel guardar(ReservationModel nueva);

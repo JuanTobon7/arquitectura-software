@@ -3,7 +3,7 @@ package com.cinecapas.application.seeders;
 import com.cinecapas.application.dto.StoreUserDto;
 import com.cinecapas.application.exceptions.DuplicatedEmailException;
 import com.cinecapas.application.services.contracts.UserService;
-import com.cinecapas.persistence.repos.UsersModelDaoRepository;
+import com.cinecapas.domain.ports.in.InUserAccounts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class UsersSeeder implements CommandLineRunner {
 
     private final UserService userService;
-    private final UsersModelDaoRepository usersRepository;
+    private final InUserAccounts usersRepository;
 
     @Override
     public void run(String... args) {
@@ -25,7 +25,7 @@ public class UsersSeeder implements CommandLineRunner {
     }
 
     private void registrar(String nombre, String email, String password) {
-        if (usersRepository.findByEmail(email) != null) {
+        if (usersRepository.porEmail(email) != null) {
             log.info("[UsersSeeder] Ya existe: {}", email);
             return;
         }

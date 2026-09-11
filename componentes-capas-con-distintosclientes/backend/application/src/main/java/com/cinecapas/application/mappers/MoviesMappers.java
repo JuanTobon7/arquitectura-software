@@ -1,6 +1,5 @@
 package com.cinecapas.application.mappers;
 
-
 import com.cinecapas.application.dto.MovieDto;
 import com.cinecapas.application.dto.StoreMovieDto;
 import com.cinecapas.domain.enums.Formats;
