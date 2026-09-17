@@ -1,10 +1,12 @@
 package com.pipesfilters.images;
 
+import com.pipesfilters.dtos.FileFrame;
 import com.pipesfilters.protocol.FpsReader;
 import com.pipesfilters.protocol.FpsWriter;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,6 +85,7 @@ public class ProcessorImagesMain {
     private static final class DirectoryImageStream extends java.io.InputStream {
 
         private final Path directory;
+        private java.io.ByteArrayOutputStream buffer;
         private java.io.InputStream current;
         private java.util.Iterator<Path> iterator;
         private boolean finished = false;
@@ -109,7 +112,9 @@ public class ProcessorImagesMain {
                 }
                 Path next = iterator.next();
                 if (Files.isRegularFile(next)) {
-                    current = java.nio.file.Files.newInputStream(next);
+                    buffer.reset();
+                    writeFrame(next);
+                    current = new java.io.ByteArrayInputStream(buffer.toByteArray());
                 }
             }
         }
@@ -120,7 +125,44 @@ public class ProcessorImagesMain {
             }
             if (iterator == null) {
                 this.iterator = Files.list(directory).iterator();
+                this.buffer = new java.io.ByteArrayOutputStream();
             }
+        }
+
+        private void writeFrame(Path file) throws java.io.IOException {
+            String name = file.getFileName().toString();
+            byte[] content = Files.readAllBytes(file);
+
+            FileFrame frame = new FileFrame(name, content);
+            byte[] nameBytes = frame.name().getBytes(StandardCharsets.UTF_8);
+
+            buffer.write(intToBytes(0x46505331));
+            buffer.write(intToBytes(nameBytes.length));
+            buffer.write(nameBytes);
+            buffer.write(longToBytes(frame.content().length));
+            buffer.write(frame.content());
+        }
+
+        private byte[] intToBytes(int value) {
+            return new byte[]{
+                    (byte) (value >>> 24),
+                    (byte) (value >>> 16),
+                    (byte) (value >>> 8),
+                    (byte) value
+            };
+        }
+
+        private byte[] longToBytes(long value) {
+            return new byte[]{
+                    (byte) (value >>> 56),
+                    (byte) (value >>> 48),
+                    (byte) (value >>> 40),
+                    (byte) (value >>> 32),
+                    (byte) (value >>> 24),
+                    (byte) (value >>> 16),
+                    (byte) (value >>> 8),
+                    (byte) value
+            };
         }
     }
 }
