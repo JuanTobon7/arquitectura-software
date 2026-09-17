@@ -26,7 +26,12 @@
         </dependency>
         <dependency>
             <groupId>com.pipesfilters</groupId>
-            <artifactId>converter</artifactId>
+            <artifactId>converter-binary</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pipesfilters</groupId>
+            <artifactId>converter-base64</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

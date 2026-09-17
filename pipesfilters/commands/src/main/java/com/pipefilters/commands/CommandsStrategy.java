@@ -6,6 +6,8 @@ import com.pipefilters.persistence.Persistence;
 import com.pipefilters.security.EncryptSha256;
 import com.pipesfilters.images.ProcessorImages;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +19,10 @@ public class CommandsStrategy {
 
     public CommandsStrategy() {
 
+        Path defaultOutputDir = Paths.get(".").toAbsolutePath().normalize();
+
         this.filters = Map.of(
-                CommandsList.IMAGE, ProcessorImages::new,
+                CommandsList.IMAGE, () -> new ProcessorImages(defaultOutputDir),
                 CommandsList.BASE64, BinaryToBase64::new,
                 CommandsList.BINARY, Base64ToBinary::new,
                 CommandsList.SECURITY, EncryptSha256::new,

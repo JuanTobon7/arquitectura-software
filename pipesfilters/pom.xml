@@ -19,7 +19,8 @@
         <module>console</module>
         <module>core</module>
         <module>images</module>
-        <module>converter</module>
+        <module>converter-binary</module>
+        <module>converter-base64</module>
         <module>security</module>
         <module>persistence</module>
         <module>commands</module>

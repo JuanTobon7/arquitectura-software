@@ -1,88 +1,153 @@
 package com.pipesfilters.images;
 
-import com.pipesfilters.concurrence.ConcurrenceBase;
-import com.pipesfilters.dtos.FileFrame;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.imageio.ImageIO;
+
+import com.pipesfilters.concurrence.ConcurrenceBase;
+import com.pipesfilters.dtos.FileFrame;
+import com.pipesfilters.protocol.FpsReader;
+import com.pipesfilters.protocol.FpsWriter;
 
 public class ProcessorImages extends ConcurrenceBase {
 
+    private final Path outputBaseDir;
+
+    public ProcessorImages(Path outputBaseDir) {
+        this.outputBaseDir = outputBaseDir;
+    }
+
     @Override
-    public void process(com.pipesfilters.protocol.FpsReader entrada, com.pipesfilters.protocol.FpsWriter salida) throws InterruptedException, java.util.concurrent.ExecutionException, java.io.IOException {
+    public void process(
+            FpsReader entrada,
+            FpsWriter salida
+    ) throws InterruptedException, ExecutionException, IOException {
 
-        java.nio.file.Path outputDir = java.nio.file.Paths.get("images-output-" + System.currentTimeMillis());
-        java.nio.file.Files.createDirectories(outputDir);
+        Path outputDir = outputBaseDir.resolve(
+                "images-output-" + System.currentTimeMillis()
+        );
 
-        java.util.List<String> writtenFiles = new java.util.ArrayList<>();
+        Files.createDirectories(outputDir);
 
-        com.pipesfilters.dtos.FileFrame frame;
+        FileFrame frame;
+
         while ((frame = entrada.read()) != null) {
-            // validar que es imagen
-            BufferedImage imagen = null;
-            try {
-                imagen = ImageIO.read(new ByteArrayInputStream(frame.content()));
-            } catch (Exception ignored) {}
 
-            if (imagen == null) {
-                // no es imagen: saltar
+            BufferedImage imagen;
+
+            try {
+                imagen = ImageIO.read(
+                        new ByteArrayInputStream(frame.content())
+                );
+            } catch (Exception e) {
                 continue;
             }
 
-            String format = HelperImage.getFormat(frame.name());
-            String baseName = frame.name();
-            int punto = baseName.lastIndexOf('.');
-            String nameWithoutExt = (punto == -1) ? baseName : baseName.substring(0, punto);
+            if (imagen == null) {
+                continue;
+            }
 
-            // crear copias con pool de 5 hilos SOLO para este filtro
-            final BufferedImage imgCopy = imagen;
-            final String formatCopy = format;
-            final String nameCopy = nameWithoutExt;
+            processImage(imagen, frame.name(), outputDir);
+        }
 
-            java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(5);
-            java.util.List<java.util.concurrent.Future<?>> tasks = new java.util.ArrayList<>();
+        String dirPath = outputDir.toAbsolutePath().toString();
+
+        salida.write(
+                new FileFrame(
+                        dirPath,
+                        dirPath.getBytes(StandardCharsets.UTF_8)
+                )
+        );
+
+        salida.close();
+    }
+
+    private void processImage(
+            BufferedImage image,
+            String originalName,
+            Path outputDir
+    ) throws IOException, InterruptedException {
+
+        String format = HelperImage.getFormat(originalName);
+
+        String baseName = originalName;
+        int punto = baseName.lastIndexOf('.');
+
+        String nameWithoutExt =
+                punto == -1
+                        ? baseName
+                        : baseName.substring(0, punto);
+
+        ExecutorService pool = Executors.newFixedThreadPool(5);
+
+        try {
+            List<Future<?>> tasks = new ArrayList<>();
 
             for (int i = 1; i <= 5; i++) {
-                final int idx = i;
+                final int index = i;
+
                 tasks.add(pool.submit(() -> {
                     try {
-                        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
-                        boolean written = ImageIO.write(imgCopy, formatCopy, buffer);
-                        if (!written) throw new java.io.IOException("No se pudo escribir la imagen en formato: " + formatCopy);
+                        ByteArrayOutputStream buffer =
+                                new ByteArrayOutputStream();
 
-                        String outName = nameCopy + "_" + idx + "." + formatCopy;
-                        java.nio.file.Path target = outputDir.resolve(outName);
-                        java.nio.file.Files.write(target, buffer.toByteArray());
+                        boolean written =
+                                ImageIO.write(image, format, buffer);
 
-                        synchronized (writtenFiles) {
-                            writtenFiles.add(target.toAbsolutePath().toString());
+                        if (!written) {
+                            throw new IOException(
+                                    "No se pudo escribir la imagen en formato: "
+                                            + format
+                            );
                         }
-                    } catch (Exception e) {
+
+                        String outputName =
+                                nameWithoutExt
+                                        + "_"
+                                        + index
+                                        + "."
+                                        + format;
+
+                        Path target = outputDir.resolve(outputName);
+
+                        Files.write(
+                                target,
+                                buffer.toByteArray()
+                        );
+
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }));
             }
 
-            // esperar a que terminen las 5 tareas para esta imagen
-            for (java.util.concurrent.Future<?> t : tasks) {
-                try { t.get(); } catch (Exception e) { throw new RuntimeException(e); }
+            for (Future<?> task : tasks) {
+                task.get();
             }
+
+        } catch (java.util.concurrent.ExecutionException e) {
+            throw new RuntimeException(e.getCause());
+        } finally {
             pool.shutdown();
         }
-
-        // preparar contenido con el path del directorio (como bytes UTF-8)
-        String dirPath = outputDir.toAbsolutePath().toString();
-        com.pipesfilters.dtos.FileFrame outFrame = new com.pipesfilters.dtos.FileFrame(dirPath, dirPath.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-
-        salida.write(outFrame);
-        salida.close();
     }
 
     @Override
     protected FileFrame processFile(FileFrame origen) throws Exception {
-        throw new UnsupportedOperationException("ProcessorImages utiliza su propia implementación de process().");
+        throw new UnsupportedOperationException(
+                "ProcessorImages utiliza su propia implementación de process()."
+        );
     }
 }
