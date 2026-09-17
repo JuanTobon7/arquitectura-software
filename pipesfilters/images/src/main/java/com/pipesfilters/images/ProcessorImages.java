@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -24,6 +24,7 @@ import com.pipesfilters.protocol.FpsWriter;
 public class ProcessorImages extends ConcurrenceBase {
 
     private final Path outputBaseDir;
+    private Path lastOutputDir;
 
     public ProcessorImages(Path outputBaseDir) {
         this.outputBaseDir = outputBaseDir;
@@ -40,6 +41,7 @@ public class ProcessorImages extends ConcurrenceBase {
         );
 
         Files.createDirectories(outputDir);
+        this.lastOutputDir = outputDir;
 
         FileFrame frame;
 
@@ -62,16 +64,30 @@ public class ProcessorImages extends ConcurrenceBase {
             processImage(imagen, frame.name(), outputDir);
         }
 
-        String dirPath = outputDir.toAbsolutePath().toString();
+        writeOutputFrames(outputDir, salida);
+    }
 
-        salida.write(
-                new FileFrame(
-                        dirPath,
-                        dirPath.getBytes(StandardCharsets.UTF_8)
-                )
-        );
+    public Path getLastOutputDir() {
+        if (lastOutputDir == null) {
+            return outputBaseDir;
+        }
+        return lastOutputDir;
+    }
 
-        salida.close();
+    private void writeOutputFrames(Path outputDir, FpsWriter salida) throws IOException {
+        try (Stream<Path> paths = Files.list(outputDir)) {
+            List<Path> files = paths
+                    .filter(Files::isRegularFile)
+                    .sorted()
+                    .toList();
+
+            for (Path file : files) {
+                salida.write(new FileFrame(
+                        file.getFileName().toString(),
+                        Files.readAllBytes(file)
+                ));
+            }
+        }
     }
 
     private void processImage(
@@ -147,7 +163,7 @@ public class ProcessorImages extends ConcurrenceBase {
     @Override
     protected FileFrame processFile(FileFrame origen) throws Exception {
         throw new UnsupportedOperationException(
-                "ProcessorImages utiliza su propia implementación de process()."
+                "ProcessorImages utiliza su propia implementacion de process()."
         );
     }
 }

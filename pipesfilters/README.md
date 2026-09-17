@@ -111,6 +111,36 @@ porque el pipeline está pensado para ejecutar desde un nivel más primitivo has
 "C:\Users\usuario\Pictures\foto.png" > image png | save
 ```
 
+## Ejecución con tuberías del sistema operativo
+
+Cada filtro también se empaqueta como un JAR ejecutable. Puedes encadenarlos con las tuberías (`|`) del sistema operativo. Cada JAR lee el marcador de directorio del proceso anterior, procesa los archivos del directorio y pasa el nuevo directorio al siguiente proceso.
+
+Los JARs generados se encuentran en:
+
+```text
+images/target/images-1.0-SNAPSHOT.jar
+converter-binary/target/converter-binary-1.0-SNAPSHOT.jar
+converter-base64/target/converter-base64-1.0-SNAPSHOT.jar
+security/target/security-1.0-SNAPSHOT.jar
+persistence/target/persistence-1.0-SNAPSHOT.jar
+```
+
+### Ejemplo: imagen → base64 → security → save
+
+Desde `cmd.exe` (recomendado en Windows para redirecciones binarias):
+
+```cmd
+chcp 65001
+echo C:\Users\usuario\Pictures\Screenshots | java -jar images\target\images-1.0-SNAPSHOT.jar | java -jar converter-binary\target\converter-binary-1.0-SNAPSHOT.jar | java -jar security\target\security-1.0-SNAPSHOT.jar | java -jar persistence\target\persistence-1.0-SNAPSHOT.jar
+```
+
+### Ejemplo con conversión base64 ↔ binario
+
+```cmd
+echo C:\Users\usuario\Pictures\Screenshots | java -jar images\target\images-1.0-SNAPSHOT.jar | java -jar converter-binary\target\converter-binary-1.0-SNAPSHOT.jar | java -jar converter-base64\target\converter-base64-1.0-SNAPSHOT.jar | java -jar security\target\security-1.0-SNAPSHOT.jar | java -jar persistence\target\persistence-1.0-SNAPSHOT.jar
+```
+
+La salida final de `persistence` es el listado de archivos guardados en la base de datos H2.
 ## Base de datos
 
 La persistencia usa H2 embebido, guardado localmente en:

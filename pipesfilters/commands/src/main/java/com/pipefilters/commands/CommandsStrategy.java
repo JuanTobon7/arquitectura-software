@@ -19,7 +19,7 @@ public class CommandsStrategy {
 
     public CommandsStrategy() {
 
-        Path defaultOutputDir = Paths.get(".").toAbsolutePath().normalize();
+        Path defaultOutputDir = Paths.get("result", "images").toAbsolutePath().normalize();
 
         this.filters = Map.of(
                 CommandsList.IMAGE, () -> new ProcessorImages(defaultOutputDir),
