@@ -12,7 +12,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.pipesfilters.plugins.Plugin;
+import com.pipesfilters.plugins.TerminalPlugin;
 
 public class ImageFilterClient extends JFrame {
 
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 650;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 750;
 
     private final java.util.List<JCheckBox> filterCheckBoxes = new java.util.ArrayList<>();
     private final java.util.Map<JCheckBox, Plugin> checkBoxPluginMap = new java.util.LinkedHashMap<>();
@@ -33,6 +33,7 @@ public class ImageFilterClient extends JFrame {
     private final JLabel originalImageLabel = new JLabel("Imagen Inicial", SwingConstants.CENTER);
     private final JPanel filteredImagesPanel = new JPanel();
     private final JTextArea consoleArea = new JTextArea(8, 40);
+    private final JTextArea metadataArea = new JTextArea(8, 30);
 
     private byte[] currentImageBytes;
     private String currentImageName;
@@ -40,7 +41,7 @@ public class ImageFilterClient extends JFrame {
     private final ComponentManager componentManager = new ComponentManager();
 
     public ImageFilterClient() {
-        super("AplicaciÃƒÂ³n de procesamiento de imÃƒÂ¡genes con filtros con Arquitectura Plugin");
+        super("Aplicacion de procesamiento de imagenes con filtros con Arquitectura Plugin");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
@@ -67,9 +68,13 @@ public class ImageFilterClient extends JFrame {
         styleButton(loadImageBtn);
         loadImageBtn.addActionListener(e -> loadImage());
 
-        JButton loadComponentBtn = new JButton("Cargar componentes (filtros)");
+        JButton loadComponentBtn = new JButton("Cargar plugin manualmente");
         styleButton(loadComponentBtn);
         loadComponentBtn.addActionListener(e -> loadExternalComponent());
+
+        JButton loadFolderBtn = new JButton("Cargar todos los plugins");
+        styleButton(loadFolderBtn);
+        loadFolderBtn.addActionListener(e -> loadPluginsFolder());
 
         JPanel filterPanel = createTitledPanel("Componentes (filtros)");
         filterPanel.setLayout(new BorderLayout());
@@ -95,6 +100,8 @@ public class ImageFilterClient extends JFrame {
         panel.add(loadImageBtn);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
         panel.add(loadComponentBtn);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(loadFolderBtn);
         panel.add(Box.createRigidArea(new Dimension(0, 15)));
         panel.add(filterPanel);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -106,8 +113,10 @@ public class ImageFilterClient extends JFrame {
     }
 
     private JPanel buildRightPanel() {
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(new EmptyBorder(15, 0, 15, 15));
+
+        JPanel imagesPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
         JPanel originalPanel = createTitledPanel("Imagen Inicial");
         originalPanel.setLayout(new BorderLayout());
@@ -121,8 +130,19 @@ public class ImageFilterClient extends JFrame {
         JScrollPane filteredScroll = new JScrollPane(filteredImagesPanel);
         filteredPanel.add(filteredScroll, BorderLayout.CENTER);
 
-        panel.add(originalPanel);
-        panel.add(filteredPanel);
+        imagesPanel.add(originalPanel);
+        imagesPanel.add(filteredPanel);
+
+        JPanel metadataPanel = createTitledPanel("Metadata extraida");
+        metadataPanel.setLayout(new BorderLayout());
+        metadataArea.setEditable(false);
+        metadataArea.setFont(new Font("Consolas", Font.PLAIN, 12));
+        JScrollPane metadataScroll = new JScrollPane(metadataArea);
+        metadataPanel.add(metadataScroll, BorderLayout.CENTER);
+        metadataPanel.setPreferredSize(new Dimension(320, HEIGHT));
+
+        panel.add(imagesPanel, BorderLayout.CENTER);
+        panel.add(metadataPanel, BorderLayout.EAST);
 
         return panel;
     }
@@ -155,7 +175,7 @@ public class ImageFilterClient extends JFrame {
     private void loadImage() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                "ImÃƒÂ¡genes (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg"
+                "Imagenes (*.png, *.jpg, *.jpeg)", "png", "jpg", "jpeg"
         ));
 
         int result = chooser.showOpenDialog(this);
@@ -192,9 +212,24 @@ public class ImageFilterClient extends JFrame {
         try {
             componentManager.installPluginJar(jarPath);
             refreshPlugins();
-            log("Plugin externo cargado: " + jarPath.getFileName());
+            log("Plugin cargado: " + jarPath.getFileName());
         } catch (Exception ex) {
-            logError("Error cargando plugin externo: " + ex.getMessage());
+            logError("Error cargando plugin: " + ex.getMessage());
+        }
+    }
+
+    private void loadPluginsFolder() {
+        Path folder = Paths.get("plugins").toAbsolutePath().normalize();
+        if (!Files.isDirectory(folder)) {
+            logError("No existe la carpeta de plugins: " + folder);
+            return;
+        }
+        try {
+            componentManager.installPluginFolder(folder);
+            refreshPlugins();
+            log("Plugins cargados desde: " + folder);
+        } catch (Exception ex) {
+            logError("Error cargando carpeta de plugins: " + ex.getMessage());
         }
     }
 
@@ -207,7 +242,7 @@ public class ImageFilterClient extends JFrame {
 
         boolean first = true;
         for (Plugin plugin : plugins.values().stream().sorted(java.util.Comparator.comparing(Plugin::id)).toList()) {
-            if (plugin instanceof com.pipesfilters.plugins.TerminalPlugin) {
+            if (plugin instanceof TerminalPlugin) {
                 continue;
             }
             JCheckBox check = new JCheckBox(plugin.id());
@@ -238,6 +273,13 @@ public class ImageFilterClient extends JFrame {
             return;
         }
 
+        Map<String, Plugin> discovered = componentManager.discoverPlugins();
+        boolean hasTerminal = discovered.values().stream().anyMatch(p -> p instanceof TerminalPlugin);
+        if (!hasTerminal) {
+            logError("No hay un plugin terminal (persistence) cargado. Cargalo manualmente antes de ejecutar.");
+            return;
+        }
+
         List<String> selectedIds = selectedPlugins.stream()
                 .map(Plugin::id)
                 .toList();
@@ -255,15 +297,35 @@ public class ImageFilterClient extends JFrame {
 
             ProcessingContext input = new ProcessingContext(currentImageName, currentImageBytes);
             ParallelOrchestrator orchestrator = new ParallelOrchestrator(componentManager);
-            orchestrator.run(List.of(input), outputDir, selectedIds);
+            List<ProcessingContext> results = orchestrator.run(List.of(input), outputDir, selectedIds);
 
             findAndShowResult(suffixToPlugin);
+            showMetadata(results.isEmpty() ? input : results.get(0));
             log("Filtros ejecutados: " + selectedIds + " -> " + outputDir);
 
         } catch (Exception ex) {
             logError("Error ejecutando filtro: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    private void showMetadata(ProcessingContext ctx) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Archivo: ").append(ctx.name()).append(System.lineSeparator());
+        sb.append("Formato: ").append(ctx.getMetadata("format", String.class).orElse("N/A")).append(System.lineSeparator());
+        sb.append("Dimensiones: ")
+                .append(ctx.getMetadata("width", Integer.class).map(String::valueOf).orElse("N/A"))
+                .append("x")
+                .append(ctx.getMetadata("height", Integer.class).map(String::valueOf).orElse("N/A"))
+                .append(System.lineSeparator());
+        sb.append("Tamanio original: ").append(ctx.originalSize()).append(System.lineSeparator());
+        sb.append("SHA256: ").append(ctx.getMetadata("sha256", String.class).orElse("N/A")).append(System.lineSeparator());
+        sb.append("Ubicacion: ").append(ctx.getMetadata("ubication", String.class).orElse("N/A")).append(System.lineSeparator());
+        sb.append("Plugins aplicados: ").append(ctx.getMetadata("appliedPlugins", String.class).orElse("N/A")).append(System.lineSeparator());
+        ctx.getMetadata("metadataError", String.class).ifPresent(err -> sb.append("Error metadata: ").append(err).append(System.lineSeparator()));
+
+        metadataArea.setText(sb.toString());
+        metadataArea.setCaretPosition(0);
     }
 
     private void findAndShowResult(Map<String, Plugin> suffixToPlugin) throws Exception {
@@ -277,12 +339,13 @@ public class ImageFilterClient extends JFrame {
         Map<String, java.util.List<Path>> filesBySuffix = new java.util.LinkedHashMap<>();
         try (var paths = Files.list(outputDir)) {
             paths.filter(Files::isRegularFile)
-                 .forEach(p -> {
-                     suffixToPlugin.keySet().stream()
-                         .filter(s -> p.getFileName().toString().toLowerCase().contains(s))
-                         .findFirst()
-                         .ifPresent(s -> filesBySuffix.computeIfAbsent(s, k -> new java.util.ArrayList<>()).add(p));
-                 });
+                    .filter(p -> !p.getFileName().toString().equals("resultado.txt"))
+                    .forEach(p -> {
+                        suffixToPlugin.keySet().stream()
+                                .filter(s -> p.getFileName().toString().toLowerCase().contains(s))
+                                .findFirst()
+                                .ifPresent(s -> filesBySuffix.computeIfAbsent(s, k -> new java.util.ArrayList<>()).add(p));
+                    });
         }
 
         if (filesBySuffix.isEmpty()) {
@@ -349,9 +412,3 @@ public class ImageFilterClient extends JFrame {
         SwingUtilities.invokeLater(() -> new ImageFilterClient().setVisible(true));
     }
 }
-
-
-
-
-
-
