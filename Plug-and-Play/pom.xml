@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -22,6 +22,12 @@
         <module>converter-base64</module>
         <module>security</module>
         <module>persistence</module>
+        <module>metadata</module>
+        <module>external-blur</module>
+        <module>external-compression</module>
+        <module>external-logging</module>
+        <module>external-extra-filters</module>
+        <module>external-metadata</module>
         <module>app</module>
         <module>client</module>
     </modules>

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Compila todos los modulos y deja todos los JARs de plugins en la carpeta plugins/.
@@ -17,7 +17,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # 2. Compilar plugins externos individualmente
-$externals = @("external-blur", "external-compression", "external-logging", "external-extra-filters", "external-metadata")
+$externals = @("external-blur", "external-compression", "external-logging", "external-extra-filters")
 foreach ($module in $externals) {
     Write-Host "==> Compilando plugin externo: $module" -ForegroundColor Green
     $path = Join-Path $root $module
@@ -45,11 +45,11 @@ $pluginModules = @(
     "converter-base64\target\converter-base64-1.0-SNAPSHOT.jar",
     "security\target\security-1.0-SNAPSHOT.jar",
     "persistence\target\persistence-1.0-SNAPSHOT.jar",
+    "metadata\target\metadata-1.0-SNAPSHOT.jar",
     "external-blur\target\external-blur-1.0-SNAPSHOT.jar",
     "external-compression\target\external-compression-1.0-SNAPSHOT.jar",
     "external-logging\target\external-logging-1.0-SNAPSHOT.jar",
-    "external-extra-filters\target\external-extra-filters-1.0-SNAPSHOT.jar",
-    "external-metadata\target\external-metadata-1.0-SNAPSHOT.jar"
+    "external-extra-filters\target\external-extra-filters-1.0-SNAPSHOT.jar"
 )
 
 foreach ($relative in $pluginModules) {

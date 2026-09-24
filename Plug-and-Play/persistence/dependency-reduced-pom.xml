@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>client</artifactId>
+  <artifactId>persistence</artifactId>
   <version>1.0-SNAPSHOT</version>
   <build>
     <plugins>
@@ -22,9 +22,6 @@
             <configuration>
               <transformers>
                 <transformer />
-                <transformer>
-                  <mainClass>com.plugandplay.client.ImageFilterClient</mainClass>
-                </transformer>
               </transformers>
             </configuration>
           </execution>
@@ -33,6 +30,12 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>com.plugandplay</groupId>
+      <artifactId>core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
