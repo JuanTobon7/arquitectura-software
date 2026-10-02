@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "builder": "rspack"
+  },
+  "projects": {
+    "comp-gestor-colas-mensajes": {
+      "type": "library",
+      "root": "libs/comp-gestor-colas-mensajes",
+      "entryFile": "index",
+      "sourceRoot": "libs/comp-gestor-colas-mensajes/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comp-gestor-colas-mensajes/tsconfig.lib.json"
+      }
+    },
+    "comp-protocolo-cliente-servidor": {
+      "type": "library",
+      "root": "libs/comp-protocolo-cliente-servidor",
+      "entryFile": "index",
+      "sourceRoot": "libs/comp-protocolo-cliente-servidor/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comp-protocolo-cliente-servidor/tsconfig.lib.json"
+      }
+    },
+    "comp-protocolo-comunicacion": {
+      "type": "library",
+      "root": "libs/comp-protocolo-comunicacion",
+      "entryFile": "index",
+      "sourceRoot": "libs/comp-protocolo-comunicacion/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comp-protocolo-comunicacion/tsconfig.lib.json"
+      }
+    },
+    "comp-servicios": {
+      "type": "library",
+      "root": "libs/comp-servicios",
+      "entryFile": "index",
+      "sourceRoot": "libs/comp-servicios/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comp-servicios/tsconfig.lib.json"
+      }
+    },
+    "comp-usuarios": {
+      "type": "library",
+      "root": "libs/comp-usuarios",
+      "entryFile": "index",
+      "sourceRoot": "libs/comp-usuarios/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/comp-usuarios/tsconfig.lib.json"
+      }
+    },
+    "contrato-cliente-servidor": {
+      "type": "library",
+      "root": "libs/contrato-cliente-servidor",
+      "entryFile": "index",
+      "sourceRoot": "libs/contrato-cliente-servidor/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contrato-cliente-servidor/tsconfig.lib.json"
+      }
+    },
+    "contrato-gestor-mensajes": {
+      "type": "library",
+      "root": "libs/contrato-gestor-mensajes",
+      "entryFile": "index",
+      "sourceRoot": "libs/contrato-gestor-mensajes/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contrato-gestor-mensajes/tsconfig.lib.json"
+      }
+    },
+    "contrato-protocolo-comunicacion": {
+      "type": "library",
+      "root": "libs/contrato-protocolo-comunicacion",
+      "entryFile": "index",
+      "sourceRoot": "libs/contrato-protocolo-comunicacion/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contrato-protocolo-comunicacion/tsconfig.lib.json"
+      }
+    },
+    "contrato-servicios-disponibles": {
+      "type": "library",
+      "root": "libs/contrato-servicios-disponibles",
+      "entryFile": "index",
+      "sourceRoot": "libs/contrato-servicios-disponibles/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contrato-servicios-disponibles/tsconfig.lib.json"
+      }
+    },
+    "contrato-usuarios-disponibles": {
+      "type": "library",
+      "root": "libs/contrato-usuarios-disponibles",
+      "entryFile": "index",
+      "sourceRoot": "libs/contrato-usuarios-disponibles/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contrato-usuarios-disponibles/tsconfig.lib.json"
+      }
+    },
+    "vista-escritorio": {
+      "type": "library",
+      "root": "libs/vista-escritorio",
+      "entryFile": "index",
+      "sourceRoot": "libs/vista-escritorio/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/vista-escritorio/tsconfig.lib.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "types": [
+      "vitest/globals",
+      "node"
+    ],
+    "paths": {
+      "@app/comp-gestor-colas-mensajes": [
+        "./libs/comp-gestor-colas-mensajes/src/index.ts"
+      ],
+      "@app/comp-gestor-colas-mensajes/*": [
+        "./libs/comp-gestor-colas-mensajes/src/*"
+      ],
+      "@app/comp-protocolo-cliente-servidor": [
+        "./libs/comp-protocolo-cliente-servidor/src/index.ts"
+      ],
+      "@app/comp-protocolo-cliente-servidor/*": [
+        "./libs/comp-protocolo-cliente-servidor/src/*"
+      ],
+      "@app/comp-protocolo-comunicacion": [
+        "./libs/comp-protocolo-comunicacion/src/index.ts"
+      ],
+      "@app/comp-protocolo-comunicacion/*": [
+        "./libs/comp-protocolo-comunicacion/src/*"
+      ],
+      "@app/comp-servicios": [
+        "./libs/comp-servicios/src/index.ts"
+      ],
+      "@app/comp-servicios/*": [
+        "./libs/comp-servicios/src/*"
+      ],
+      "@app/comp-usuarios": [
+        "./libs/comp-usuarios/src/index.ts"
+      ],
+      "@app/comp-usuarios/*": [
+        "./libs/comp-usuarios/src/*"
+      ],
+      "@app/contrato-cliente-servidor": [
+        "./libs/contrato-cliente-servidor/src/index.ts"
+      ],
+      "@app/contrato-cliente-servidor/*": [
+        "./libs/contrato-cliente-servidor/src/*"
+      ],
+      "@app/contrato-gestor-mensajes": [
+        "./libs/contrato-gestor-mensajes/src/index.ts"
+      ],
+      "@app/contrato-gestor-mensajes/*": [
+        "./libs/contrato-gestor-mensajes/src/*"
+      ],
+      "@app/contrato-protocolo-comunicacion": [
+        "./libs/contrato-protocolo-comunicacion/src/index.ts"
+      ],
+      "@app/contrato-protocolo-comunicacion/*": [
+        "./libs/contrato-protocolo-comunicacion/src/*"
+      ],
+      "@app/contrato-servicios-disponibles": [
+        "./libs/contrato-servicios-disponibles/src/index.ts"
+      ],
+      "@app/contrato-servicios-disponibles/*": [
+        "./libs/contrato-servicios-disponibles/src/*"
+      ],
+      "@app/contrato-usuarios-disponibles": [
+        "./libs/contrato-usuarios-disponibles/src/index.ts"
+      ],
+      "@app/contrato-usuarios-disponibles/*": [
+        "./libs/contrato-usuarios-disponibles/src/*"
+      ],
+      "@app/vista-escritorio": [
+        "./libs/vista-escritorio/src/index.ts"
+      ],
+      "@app/vista-escritorio/*": [
+        "./libs/vista-escritorio/src/*"
+      ]
+    }
+  }
+}
