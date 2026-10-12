@@ -3,7 +3,7 @@
 const path = require('path');
 const PptxGenJS = require(process.env.PPTXGENJS || 'pptxgenjs');
 
-const RAIZ = path.resolve(__dirname, '..');
+const RAIZ = path.resolve(__dirname, '..', '..');
 const m = require(path.join(RAIZ, 'resultados', 'metricas.json'));
 const k6 = require(path.join(RAIZ, 'resultados', 'k6-resumen.json'));
 const CAP = path.join(RAIZ, 'resultados', 'capturas');
