@@ -86,14 +86,30 @@ escenas.forEach((e, i) => {
 console.log('imágenes listas');
 
 // 2) Narración con la voz en español de Windows
-// Voz neural local y gratuita: Piper (https://github.com/rhasspy/piper) con el modelo es_MX-claude-high.
-// Variables: PIPER_PYTHON (python con piper-tts instalado) y PIPER_MODEL (ruta al .onnx).
-const PY = process.env.PIPER_PYTHON || 'python';
-const MODELO = process.env.PIPER_MODEL || 'es_MX-claude-high.onnx';
-for (const e of escenas) {
-  const wav = path.join(DIR, 'audio', `${e.id}.wav`);
-  execFileSync(PY, ['-m', 'piper', '-m', MODELO, '-f', wav, '--sentence-silence', '0.35', '--length-scale', process.env.PIPER_LENGTH || '1.0'],
-    { input: e.voz, stdio: ['pipe', 'ignore', 'ignore'], env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' } });
+// Narración. Por defecto usa la voz en español de Windows (Microsoft Sabina, ya incluida en el sistema).
+// Con TTS=piper usa Piper (voz neural local y gratuita): PIPER_PYTHON, PIPER_MODEL y PIPER_LENGTH.
+if ((process.env.TTS || 'windows') === 'piper') {
+  const PY = process.env.PIPER_PYTHON || 'python';
+  const MODELO = process.env.PIPER_MODEL || 'es_MX-claude-high.onnx';
+  for (const e of escenas) {
+    const wav = path.join(DIR, 'audio', `${e.id}.wav`);
+    execFileSync(PY, ['-m', 'piper', '-m', MODELO, '-f', wav, '--sentence-silence', '0.35', '--length-scale', process.env.PIPER_LENGTH || '1.0'],
+      { input: e.voz, stdio: ['pipe', 'ignore', 'ignore'], env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' } });
+  }
+} else {
+  const voces = escenas.map((e) => ({ id: e.id, texto: e.voz, wav: path.join(DIR, 'audio', `${e.id}.wav`) }));
+  fs.writeFileSync(path.join(DIR, 'voces.json'), JSON.stringify(voces), 'utf8');
+  const ps = [
+    'Add-Type -AssemblyName System.Speech',
+    `$v = Get-Content -Raw -Encoding UTF8 '${path.join(DIR, 'voces.json')}' | ConvertFrom-Json`,
+    '$s = New-Object System.Speech.Synthesis.SpeechSynthesizer',
+    "$s.SelectVoice('Microsoft Sabina Desktop')",
+    `$s.Rate = ${process.env.WIN_RATE || '1'}`,
+    'foreach ($x in $v) { $s.SetOutputToWaveFile($x.wav); $s.Speak($x.texto) }',
+    '$s.SetOutputToNull()',
+  ].join('\n');
+  fs.writeFileSync(path.join(DIR, 'voz.ps1'), '﻿' + ps, 'utf8');
+  execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(DIR, 'voz.ps1')], { stdio: 'inherit' });
 }
 console.log('narración lista');
 

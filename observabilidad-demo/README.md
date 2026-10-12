@@ -93,7 +93,7 @@ La alerta `TasaErroresAlta` se disparó para `/api/pagos`. Capturas en `resultad
 - Guía paso a paso del taller: [TALLER.md](TALLER.md) (también en `presentacion/guia-taller-observabilidad.pdf`).
 - Video guía narrado: `video/taller-observabilidad.mp4` (subtítulos en `video/taller-observabilidad.srt`).
   Se regenera con `node video/fuente/capturar.js` (con el stack y la carga corriendo) y
-  `node video/fuente/construir.js salida.mp4` (requiere Windows, Edge, ffmpeg, el paquete npm `jimp` y la voz local gratuita Piper: `pip install piper-tts` + modelo `es_MX-claude-high`).
+  `node video/fuente/construir.js salida.mp4` (requiere Windows, Edge, ffmpeg y el paquete npm `jimp`; narra con la voz en español de Windows y `WIN_RATE=2`, o con Piper usando `TTS=piper`).
 
 ## Apagar
 
