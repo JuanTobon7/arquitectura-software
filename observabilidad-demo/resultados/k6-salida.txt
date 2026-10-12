@@ -1,0 +1,60 @@
+pedidos_n_mas_1      [  97% ] 001/020 VUs  3m53.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  97% ] 000/020 VUs  3m53.0s/4m0s  5.00 iters/s
+
+running (3m54.0s), 004/080 VUs, 9356 complete and 0 interrupted iterations
+catalogo             [  97% ] 000/020 VUs  3m54.0s/4m0s  10.00 iters/s
+pagos                [  97% ] 003/020 VUs  3m54.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [  97% ] 001/020 VUs  3m54.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  97% ] 000/020 VUs  3m54.0s/4m0s  5.00 iters/s
+
+running (3m55.0s), 003/080 VUs, 9397 complete and 0 interrupted iterations
+catalogo             [  98% ] 000/020 VUs  3m55.0s/4m0s  10.00 iters/s
+pagos                [  98% ] 002/020 VUs  3m55.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [  98% ] 001/020 VUs  3m55.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  98% ] 000/020 VUs  3m55.0s/4m0s  5.00 iters/s
+
+running (3m56.0s), 001/080 VUs, 9439 complete and 0 interrupted iterations
+catalogo             [  98% ] 000/020 VUs  3m56.0s/4m0s  10.00 iters/s
+pagos                [  98% ] 000/020 VUs  3m56.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [  98% ] 001/020 VUs  3m56.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  98% ] 000/020 VUs  3m56.0s/4m0s  5.00 iters/s
+
+running (3m57.0s), 002/080 VUs, 9478 complete and 0 interrupted iterations
+catalogo             [  99% ] 000/020 VUs  3m57.0s/4m0s  10.00 iters/s
+pagos                [  99% ] 001/020 VUs  3m57.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [  99% ] 001/020 VUs  3m57.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  99% ] 000/020 VUs  3m57.0s/4m0s  5.00 iters/s
+
+running (3m58.0s), 002/080 VUs, 9518 complete and 0 interrupted iterations
+catalogo             [  99% ] 000/020 VUs  3m58.0s/4m0s  10.00 iters/s
+pagos                [  99% ] 001/020 VUs  3m58.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [  99% ] 001/020 VUs  3m58.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [  99% ] 000/020 VUs  3m58.0s/4m0s  5.00 iters/s
+
+running (3m59.0s), 002/080 VUs, 9558 complete and 0 interrupted iterations
+catalogo             [ 100% ] 000/020 VUs  3m59.0s/4m0s  10.00 iters/s
+pagos                [ 100% ] 001/020 VUs  3m59.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [ 100% ] 001/020 VUs  3m59.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [ 100% ] 000/020 VUs  3m59.0s/4m0s  5.00 iters/s
+
+running (4m00.0s), 003/080 VUs, 9597 complete and 0 interrupted iterations
+catalogo             [ 100% ] 000/020 VUs  4m00.0s/4m0s  10.00 iters/s
+pagos                [ 100% ] 002/020 VUs  4m00.0s/4m0s  20.00 iters/s
+pedidos_n_mas_1      [ 100% ] 001/020 VUs  4m00.0s/4m0s  5.00 iters/s
+pedidos_optimizado   [ 100% ] 000/020 VUs  4m00.0s/4m0s  5.00 iters/s
+
+running (4m01.0s), 001/080 VUs, 9602 complete and 0 interrupted iterations
+catalogo           ✓ [ 100% ] 000/020 VUs  4m0s  10.00 iters/s
+pagos              ↓ [ 100% ] 003/020 VUs  4m0s  20.00 iters/s
+pedidos_n_mas_1    ✓ [ 100% ] 000/020 VUs  4m0s  5.00 iters/s
+pedidos_optimizado ✓ [ 100% ] 000/020 VUs  4m0s  5.00 iters/s
+
+Resumen guardado en resultados/k6-resumen.json
+
+running (4m01.1s), 000/080 VUs, 9603 complete and 0 interrupted iterations
+catalogo           ✓ [ 100% ] 000/020 VUs  4m0s  10.00 iters/s
+pagos              ✓ [ 100% ] 000/020 VUs  4m0s  20.00 iters/s
+pedidos_n_mas_1    ✓ [ 100% ] 000/020 VUs  4m0s  5.00 iters/s
+pedidos_optimizado ✓ [ 100% ] 000/020 VUs  4m0s  5.00 iters/s
+time="2026-10-12T17:44:34Z" level=error msg="thresholds on metrics 'http_req_failed{scenario:pagos}' have been crossed"
+

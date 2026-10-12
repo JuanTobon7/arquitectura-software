@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: api-demo
+  datasource:
+    url: jdbc:h2:mem:tienda
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        session_factory:
+          statement_inspector: co.edu.demo.observabilidad.ContadorSql
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
+    threads:
+      max: 50
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      # Histogramas para poder calcular p95/p99 en Prometheus con histogram_quantile
+      percentiles-histogram:
+        http.server.requests: true
+        sql.consultas.por.request: true
+
+loki:
+  url: http://localhost:3100/loki/api/v1/push

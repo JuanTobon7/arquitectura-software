@@ -1,0 +1,15 @@
+{
+  "name": "Taller de observabilidad (Spring + Prometheus + Loki + Grafana)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/observabilidad-demo",
+  "postCreateCommand": "docker compose pull prometheus loki grafana && docker compose --profile carga pull k6",
+  "forwardPorts": [3000, 9090, 8080],
+  "portsAttributes": {
+    "3000": { "label": "Grafana", "onAutoForward": "openBrowser" },
+    "9090": { "label": "Prometheus" },
+    "8080": { "label": "API demo" }
+  }
+}
