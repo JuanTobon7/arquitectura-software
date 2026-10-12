@@ -1,275 +1,787 @@
 1
-00:00:00,000 --> 00:00:02,432
-Bienvenidos al taller de observabilidad.
+00:00:00,000 --> 00:00:02,618
+Hola, bienvenidos al taller de observabilidad.
 
 2
-00:00:02,432 --> 00:00:12,282
-En unos veinte minutos van a levantar una mini tienda en Spring Boot con tres problemas escondidos, y los van a encontrar usando solo métricas, logs y dashboards.
+00:00:02,618 --> 00:00:05,123
+En este video vamos a recorrer, paso a paso,
 
 3
-00:00:12,282 --> 00:00:13,924
-No necesitan instalar nada:
+00:00:05,123 --> 00:00:08,254
+todo lo que van a hacer en los próximos veinte minutos.
 
 4
-00:00:13,924 --> 00:00:17,025
-basta un navegador y una cuenta gratuita de GitHub.
+00:00:08,254 --> 00:00:10,758
+No necesitan instalar nada en su computador:
 
 5
-00:00:17,825 --> 00:00:19,825
-El taller tiene cuatro partes:
+00:00:10,758 --> 00:00:14,344
+con un navegador y una cuenta gratuita de GitHub es suficiente.
 
 6
-00:00:19,825 --> 00:00:24,959
-levantar el entorno, generar tráfico, resolver tres misiones y un reto final.
+00:00:14,344 --> 00:00:16,735
+Pausen el video cada vez que lo necesiten.
 
 7
-00:00:24,959 --> 00:00:27,359
-Pausen el video cuando lo necesiten.
+00:00:17,535 --> 00:00:22,033
+Al terminar van a saber levantar una API de Spring Boot ya instrumentada,
 
 8
-00:00:28,159 --> 00:00:28,716
-Paso uno.
+00:00:22,033 --> 00:00:24,251
+leer un dashboard con el método RED,
 
 9
-00:00:28,716 --> 00:00:35,090
-Abran el enlace de Codespaces que está en la guía, inicien sesión con GitHub y pulsen Create codespace.
+00:00:24,251 --> 00:00:29,551
+escribir consultas en PromQL para métricas y en LogQL para logs, y, lo más importante,
 
 10
-00:00:35,090 --> 00:00:41,341
-En uno o dos minutos se abre Visual Studio Code en el navegador, ya ubicado en la carpeta del taller.
+00:00:29,551 --> 00:00:34,912
+encontrar tres problemas reales sin leer el código primero, solo mirando la telemetría.
 
 11
-00:00:41,341 --> 00:00:46,973
-Si prefieren trabajar en su computador con Docker Desktop, la guía también trae esa opción.
+00:00:34,912 --> 00:00:37,007
+Al final crearán su propia alerta.
 
 12
-00:00:47,773 --> 00:00:49,410
-En la terminal escriban:
+00:00:37,807 --> 00:00:41,015
+La aplicación es una mini tienda con cuatro endpoints.
 
 13
-00:00:49,410 --> 00:00:52,549
-docker compose up, guion d, guion guion build.
+00:00:41,015 --> 00:00:43,630
+Pagos llama a una pasarela de pagos externa.
 
 14
-00:00:52,549 --> 00:00:58,688
-La primera vez compila la API con Maven dentro de Docker, así que tarda un par de minutos.
+00:00:43,630 --> 00:00:48,146
+Hay dos endpoints de pedidos que devuelven exactamente la misma información.
 
 15
-00:00:58,688 --> 00:01:01,349
-Al final deben ver cuatro contenedores:
+00:00:48,146 --> 00:00:52,424
+Y catálogo es un endpoint sano, que nos sirve como punto de comparación.
 
 16
-00:01:01,349 --> 00:01:03,873
-api-demo, prometheus, loki y grafana.
+00:00:52,424 --> 00:00:54,682
+Escondimos tres problemas a propósito.
 
 17
-00:01:04,673 --> 00:01:08,817
-Verifiquen que la API respondió con curl a actuator health.
+00:00:54,682 --> 00:00:56,286
+Su trabajo es descubrirlos.
 
 18
-00:01:08,817 --> 00:01:10,291
-Debe decir status UP.
+00:00:57,086 --> 00:00:58,577
+Así fluye la telemetría.
 
 19
-00:01:10,291 --> 00:01:14,505
-Si dice connection refused, esperen unos segundos y repitan.
+00:00:58,577 --> 00:01:03,172
+La API de Spring Boot expone sus métricas gracias a Actuator y Micrometer.
 
 20
-00:01:15,305 --> 00:01:21,457
-Ahora abran la pestaña PORTS, junto a la terminal, y hagan clic en el globo del puerto tres mil.
+00:01:03,172 --> 00:01:06,214
+Prometheus pasa cada cinco segundos a recogerlas.
 
 21
-00:01:21,457 --> 00:01:26,776
-Se abre Grafana, sin usuario ni contraseña, directamente en el dashboard de la API.
+00:01:06,214 --> 00:01:09,319
+Los logs salen en formato JSON y se envían a Loki.
 
 22
-00:01:27,576 --> 00:01:28,189
-Paso dos:
+00:01:09,319 --> 00:01:10,871
+Y Grafana no guarda nada:
 
 23
-00:01:28,189 --> 00:01:29,281
-generar tráfico.
+00:01:10,871 --> 00:01:14,659
+solo consulta a Prometheus y a Loki para dibujar los paneles.
 
 24
-00:01:29,281 --> 00:01:32,418
-Ejecuten el comando de k6 que está en la guía.
+00:01:14,659 --> 00:01:18,074
+Un generador de carga llamado k6 simula a los usuarios.
 
 25
-00:01:32,418 --> 00:01:38,420
-Lanza unas cuarenta peticiones por segundo durante seis minutos contra cuatro endpoints.
+00:01:18,874 --> 00:01:20,698
+El taller tiene cuatro pasos.
 
 26
-00:01:38,420 --> 00:01:42,308
-Corre en segundo plano, así que pueden seguir trabajando.
+00:01:20,698 --> 00:01:22,585
+Primero levantamos el entorno.
 
 27
-00:01:43,108 --> 00:01:45,893
-Esperen un minuto y miren el dashboard.
+00:01:22,585 --> 00:01:24,220
+Después generamos tráfico.
 
 28
-00:01:45,893 --> 00:01:53,033
-Arriba está el tráfico y la tasa de errores; abajo, la latencia p95 y las consultas SQL por request.
+00:01:24,220 --> 00:01:28,497
+Luego vienen tres misiones de investigación, y cerramos con un reto.
 
 29
-00:01:53,033 --> 00:01:58,460
-Ya se ve que algo raro pasa con pagos y con uno de los endpoints de pedidos.
+00:01:28,497 --> 00:01:29,817
+Vamos con el primero.
 
 30
-00:01:58,460 --> 00:01:59,960
-Vamos a investigarlo.
+00:01:30,617 --> 00:01:34,149
+Abran el enlace de Codespaces que está al inicio de la guía.
 
 31
-00:02:00,760 --> 00:02:01,479
-Misión uno:
+00:01:34,149 --> 00:01:38,505
+Inicien sesión con su cuenta de GitHub y pulsen el botón Create codespace.
 
 32
-00:02:01,479 --> 00:02:02,786
-¿el promedio miente?
+00:01:38,505 --> 00:01:42,331
+GitHub les presta una máquina en la nube con Docker ya instalado.
 
 33
-00:02:02,786 --> 00:02:08,864
-Abran Explore, elijan Prometheus, cambien a modo Code y peguen las tres consultas de la guía:
+00:01:42,331 --> 00:01:46,981
+La primera vez tarda uno o dos minutos en prepararse, así que tengan paciencia.
 
 34
-00:02:08,864 --> 00:02:14,485
-el promedio, el percentil noventa y cinco y el percentil noventa y nueve de los pagos.
+00:01:47,781 --> 00:01:51,390
+Cuando termine, verán Visual Studio Code dentro del navegador.
 
 35
-00:02:14,485 --> 00:02:15,792
-Comparen las líneas:
+00:01:51,390 --> 00:01:55,581
+La carpeta del taller ya está abierta y abajo tienen una terminal lista.
 
 36
-00:02:15,792 --> 00:02:20,498
-el promedio ronda los cien milisegundos, pero el p99 pasa de un segundo.
+00:01:55,581 --> 00:01:59,073
+Fíjense también en la pestaña PORTS, al lado de la terminal:
 
 37
-00:02:21,298 --> 00:02:25,759
-Antes de culpar al servidor, miren los hilos de Tomcat y la CPU.
+00:01:59,073 --> 00:02:01,751
+desde ahí vamos a abrir Grafana en un momento.
 
 38
-00:02:25,759 --> 00:02:27,222
-Están casi en reposo.
+00:02:02,551 --> 00:02:06,655
+Si prefieren trabajar en su propio computador y ya tienen Docker Desktop,
 
 39
-00:02:27,222 --> 00:02:29,383
-El problema no es de capacidad:
+00:02:06,655 --> 00:02:10,253
+clonen el repositorio y entren a la carpeta observabilidad-demo.
 
 40
-00:02:29,383 --> 00:02:32,798
-es la pasarela de pagos, una dependencia externa.
+00:02:10,253 --> 00:02:14,807
+Todo lo demás es idéntico; la única diferencia es que Grafana queda en localhost,
 
 41
-00:02:32,798 --> 00:02:35,307
-Escalar servidores no lo arreglaría.
+00:02:14,807 --> 00:02:17,843
+puerto tres mil, y Prometheus en el nueve mil noventa.
 
 42
-00:02:36,107 --> 00:02:36,967
-Misión dos:
+00:02:18,643 --> 00:02:20,592
+Ahora, en la terminal, escriban:
 
 43
-00:02:36,967 --> 00:02:37,983
-cazar el N+1.
+00:02:20,592 --> 00:02:23,393
+docker compose up, guion d, guion guion build.
 
 44
-00:02:37,983 --> 00:02:43,062
-Los dos endpoints de pedidos devuelven exactamente el mismo JSON.
+00:02:23,393 --> 00:02:28,203
+La opción guion d deja todo corriendo en segundo plano, y build compila la API.
 
 45
-00:02:43,062 --> 00:02:44,781
-Compruébenlo con curl.
+00:02:28,203 --> 00:02:31,857
+La primera vez Maven descarga dependencias dentro de Docker,
 
 46
-00:02:45,581 --> 00:02:51,865
-Pero en el panel de consultas SQL por request, uno hace ciento una consultas y el otro solo una.
+00:02:31,857 --> 00:02:34,232
+así que puede tardar un par de minutos.
 
 47
-00:02:51,865 --> 00:02:57,494
-Ciento una es una consulta para los pedidos, más una por cada uno de los cien pedidos:
+00:02:34,232 --> 00:02:37,398
+Al final verán que se iniciaron cuatro contenedores.
 
 48
-00:02:57,494 --> 00:02:58,476
-el clásico N+1.
+00:02:38,198 --> 00:02:39,877
+Esos cuatro contenedores son:
 
 49
-00:02:59,276 --> 00:03:01,442
-Busquen la evidencia en los logs.
+00:02:39,877 --> 00:02:45,320
+la API en el puerto ocho mil ochenta, Prometheus con sus reglas de alerta, Loki para los logs,
 
 50
-00:03:01,442 --> 00:03:05,184
-En Explore elijan Loki y ejecuten la consulta de la guía.
+00:02:45,320 --> 00:02:45,899
+y Grafana.
 
 51
-00:03:05,184 --> 00:03:09,647
-Cada línea trae el request id, la duración y el número de consultas.
+00:02:45,899 --> 00:02:51,342
+Las fuentes de datos y el dashboard de Grafana se crean solos desde archivos de configuración.
 
 52
-00:03:09,647 --> 00:03:14,241
-Después abran PedidoRepository y comparen findAll con findAllConItems.
+00:02:51,342 --> 00:02:55,106
+Eso se llama observabilidad como código, y es una buena práctica.
 
 53
-00:03:15,041 --> 00:03:15,889
-Misión tres:
+00:02:55,906 --> 00:02:58,880
+Antes de seguir, verifiquemos que la API arrancó.
 
 54
-00:03:15,889 --> 00:03:17,301
-de la alerta al log.
+00:02:58,880 --> 00:03:03,797
+Ejecuten curl a localhost, puerto ocho mil ochenta, barra actuator, barra health.
 
 55
-00:03:17,301 --> 00:03:21,610
-Abran Prometheus en el puerto nueve mil noventa, menú Alerts.
+00:03:03,797 --> 00:03:05,860
+La respuesta debe decir status UP.
 
 56
-00:03:21,610 --> 00:03:25,283
-La alerta TasaErroresAlta está en FIRING para pagos.
+00:03:05,860 --> 00:03:08,774
+Si les sale connection refused, no se preocupen:
 
 57
-00:03:26,083 --> 00:03:28,227
-En Loki filtren por nivel ERROR.
+00:03:08,774 --> 00:03:10,716
+Spring Boot aún está arrancando.
 
 58
-00:03:28,227 --> 00:03:30,505
-Todos los mensajes dicen lo mismo:
+00:03:10,716 --> 00:03:13,084
+Esperen unos veinte segundos y repitan.
 
 59
-00:03:30,505 --> 00:03:33,118
-la pasarela de pagos respondió timeout.
+00:03:13,884 --> 00:03:19,148
+Ahora abran la pestaña PORTS y hagan clic en el ícono del globo del puerto tres mil.
 
 60
-00:03:33,118 --> 00:03:37,272
-El problema es de la dependencia, no de nuestra base de datos.
+00:03:19,148 --> 00:03:23,222
+Se abre Grafana en otra pestaña, sin pedir usuario ni contraseña,
 
 61
-00:03:38,072 --> 00:03:39,026
-El reto final.
+00:03:23,222 --> 00:03:25,603
+directamente en el dashboard API Demo.
 
 62
-00:03:39,026 --> 00:03:43,792
-La alerta de p95 no se dispara, aunque hay pagos de casi dos segundos.
+00:03:25,603 --> 00:03:30,930
+Al principio estará casi vacío; cuando generemos tráfico se verá como en esta imagen.
 
 63
-00:03:43,792 --> 00:03:55,368
-Abran el archivo alertas punto yml, peguen al final la regla LatenciaP99Alta de la guía respetando la indentación, y recarguen Prometheus con el curl que ven en pantalla.
+00:03:31,730 --> 00:03:32,280
+Paso dos:
 
 64
-00:03:56,168 --> 00:03:59,655
-En menos de un minuto la alerta pasa de Pending a Firing.
+00:03:32,280 --> 00:03:33,807
+vamos a simular usuarios.
 
 65
-00:03:59,655 --> 00:04:03,509
-Elegir el percentil del objetivo de servicio cambia lo que ven.
+00:03:33,807 --> 00:03:36,739
+Copien de la guía el comando de k6 y ejecútenlo.
 
 66
-00:04:04,309 --> 00:04:09,740
-Para terminar, comparen sus números con la tabla de referencia al final de la guía.
+00:03:36,739 --> 00:03:40,648
+Lanza unas cuarenta peticiones por segundo durante seis minutos:
 
 67
-00:04:09,740 --> 00:04:16,217
-Luego apaguen todo con docker compose down y detengan el codespace para no gastar sus horas gratis.
+00:03:40,648 --> 00:03:44,741
+veinte a pagos, diez a catálogo y cinco a cada endpoint de pedidos.
 
 68
-00:04:16,217 --> 00:04:17,002
-Eso es todo.
+00:03:44,741 --> 00:03:47,978
+Como corre en segundo plano, la terminal queda libre.
 
 69
-00:04:17,002 --> 00:04:17,591
-¡Gracias!
+00:03:48,778 --> 00:03:51,200
+Esperen un minuto y volvamos a Grafana.
+
+70
+00:03:51,200 --> 00:03:54,119
+El dashboard está organizado con el método RED:
+
+71
+00:03:54,119 --> 00:03:55,610
+Rate, Errors y Duration.
+
+72
+00:03:55,610 --> 00:04:00,082
+El primer panel es la tasa, las peticiones por segundo de cada endpoint.
+
+73
+00:04:00,082 --> 00:04:04,305
+Coincide con lo que envía k6, así que el tráfico está llegando bien.
+
+74
+00:04:05,105 --> 00:04:09,797
+El segundo panel es la tasa de errores del servidor, los códigos quinientos.
+
+75
+00:04:09,797 --> 00:04:14,118
+Fíjense que solo aparece pagos, con algo entre tres y seis por ciento.
+
+76
+00:04:14,118 --> 00:04:16,217
+Los demás endpoints están en cero.
+
+77
+00:04:16,217 --> 00:04:17,081
+Primera pista:
+
+78
+00:04:17,081 --> 00:04:19,797
+no es un problema general, es algo de pagos.
+
+79
+00:04:20,597 --> 00:04:24,904
+El tercer panel es la duración, medida con el percentil noventa y cinco.
+
+80
+00:04:24,904 --> 00:04:27,476
+Pagos ronda los cuatrocientos milisegundos,
+
+81
+00:04:27,476 --> 00:04:30,646
+y pedidos n-mas-1 se queda en unos doscientos veinte,
+
+82
+00:04:30,646 --> 00:04:34,534
+mientras que la versión optimizada y catálogo están casi en cero.
+
+83
+00:04:34,534 --> 00:04:35,371
+Segunda pista:
+
+84
+00:04:35,371 --> 00:04:37,644
+algo pasa con ese endpoint de pedidos.
+
+85
+00:04:38,444 --> 00:04:39,818
+Empecemos la misión uno:
+
+86
+00:04:39,818 --> 00:04:40,964
+¿el promedio miente?
+
+87
+00:04:40,964 --> 00:04:45,889
+En el menú de la izquierda de Grafana entren a Explore, que es el ícono de la brújula.
+
+88
+00:04:45,889 --> 00:04:50,242
+Arriba elijan la fuente de datos Prometheus y cambien el editor a modo Code.
+
+89
+00:04:50,242 --> 00:04:55,167
+Ahí van a pegar tres consultas de la guía, una debajo de otra, con el botón Add query.
+
+90
+00:04:55,967 --> 00:04:57,623
+La primera calcula el promedio:
+
+91
+00:04:57,623 --> 00:05:01,415
+la suma de todas las duraciones dividida entre el número de peticiones.
+
+92
+00:05:01,415 --> 00:05:08,946
+Las otras dos usan histogram quantile para calcular los percentiles noventa y cinco y noventa y nueve a partir de los buckets del histograma.
+
+93
+00:05:08,946 --> 00:05:10,975
+El percentil noventa y nueve responde:
+
+94
+00:05:10,975 --> 00:05:13,966
+¿cuánto espera el uno por ciento de usuarios más lentos?
+
+95
+00:05:14,766 --> 00:05:15,937
+Miren la gráfica.
+
+96
+00:05:15,937 --> 00:05:20,760
+La línea verde, el promedio, está alrededor de cero coma uno segundos:
+
+97
+00:05:20,760 --> 00:05:21,587
+parece sano.
+
+98
+00:05:21,587 --> 00:05:24,619
+La amarilla, el p95, ronda cero coma cuatro.
+
+99
+00:05:24,619 --> 00:05:28,339
+Pero la azul, el p99, pasa de uno coma cinco segundos.
+
+100
+00:05:28,339 --> 00:05:33,300
+Es decir, uno de cada cien pagos tarda quince veces más que el promedio.
+
+101
+00:05:33,300 --> 00:05:37,158
+Si solo miráramos el promedio, nunca lo habríamos visto.
+
+102
+00:05:37,958 --> 00:05:42,802
+Antes de culpar al servidor, revisen en el dashboard los paneles de recursos:
+
+103
+00:05:42,802 --> 00:05:44,752
+hilos de Tomcat ocupados y CPU.
+
+104
+00:05:44,752 --> 00:05:46,135
+Esto es el método USE:
+
+105
+00:05:46,135 --> 00:05:48,274
+utilización, saturación y errores.
+
+106
+00:05:48,274 --> 00:05:52,740
+De cincuenta hilos disponibles casi no se usan, y la CPU está muy baja.
+
+107
+00:05:52,740 --> 00:05:54,438
+El servidor está tranquilo.
+
+108
+00:05:55,238 --> 00:05:56,928
+Conclusión de la misión uno:
+
+109
+00:05:56,928 --> 00:06:00,972
+la lentitud no viene de nuestra API, viene de la pasarela de pagos,
+
+110
+00:06:00,972 --> 00:06:02,843
+que es una dependencia externa.
+
+111
+00:06:02,843 --> 00:06:05,378
+Agregar más servidores no arreglaría nada.
+
+112
+00:06:05,378 --> 00:06:08,336
+Lo que sí ayuda son timeouts, un circuit breaker,
+
+113
+00:06:08,336 --> 00:06:12,320
+y definir los objetivos de servicio en el p99 y no en el promedio.
+
+114
+00:06:13,120 --> 00:06:13,799
+Misión dos:
+
+115
+00:06:13,799 --> 00:06:14,971
+cazar el N más uno.
+
+116
+00:06:14,971 --> 00:06:19,353
+Vuelvan a la terminal y llamen con curl a los dos endpoints de pedidos.
+
+117
+00:06:19,353 --> 00:06:22,439
+Van a ver que devuelven exactamente el mismo JSON:
+
+118
+00:06:22,439 --> 00:06:24,722
+los mismos cien pedidos con su total.
+
+119
+00:06:24,722 --> 00:06:28,055
+Entonces, ¿por qué uno es mucho más lento que el otro?
+
+120
+00:06:28,855 --> 00:06:34,677
+La respuesta está en el panel de consultas SQL por request, una métrica que agregamos nosotros.
+
+121
+00:06:34,677 --> 00:06:39,701
+El endpoint n-mas-1 hace ciento una consultas a la base de datos en cada petición.
+
+122
+00:06:39,701 --> 00:06:41,417
+El optimizado hace solo una.
+
+123
+00:06:41,417 --> 00:06:47,055
+Ciento una es una consulta para traer los pedidos, más una por cada uno de los cien pedidos.
+
+124
+00:06:47,055 --> 00:06:49,261
+Ese es el famoso problema N más uno.
+
+125
+00:06:50,061 --> 00:06:52,437
+Ahora busquemos la evidencia en los logs.
+
+126
+00:06:52,437 --> 00:06:56,380
+En Explore cambien la fuente de datos a Loki y peguen esta consulta.
+
+127
+00:06:56,380 --> 00:06:57,017
+Se lee así:
+
+128
+00:06:57,017 --> 00:07:00,901
+entre los logs de la app api-demo, interpreta cada línea como JSON,
+
+129
+00:07:00,901 --> 00:07:04,785
+y quédate solo con las que hicieron más de cincuenta consultas SQL.
+
+130
+00:07:05,585 --> 00:07:07,439
+Cada línea es un request real.
+
+131
+00:07:07,439 --> 00:07:09,232
+Abran una y miren sus campos:
+
+132
+00:07:09,232 --> 00:07:15,041
+el request id para rastrearlo, la uri, la duración en milisegundos y las ciento una consultas.
+
+133
+00:07:15,041 --> 00:07:18,625
+Esto funciona porque los logs están estructurados en JSON.
+
+134
+00:07:18,625 --> 00:07:23,075
+Con logs de texto plano tendríamos que pelear con expresiones regulares.
+
+135
+00:07:23,875 --> 00:07:25,455
+Ahora sí, abran el código:
+
+136
+00:07:25,455 --> 00:07:27,643
+PedidoRepository y PedidoController.
+
+137
+00:07:27,643 --> 00:07:33,296
+El endpoint lento usa findAll, que trae los pedidos, y luego, al pedir los ítems de cada uno,
+
+138
+00:07:33,296 --> 00:07:37,308
+Hibernate lanza una consulta extra porque la relación es perezosa.
+
+139
+00:07:37,308 --> 00:07:41,076
+El optimizado usa join fetch y trae todo en una sola consulta.
+
+140
+00:07:41,076 --> 00:07:43,629
+Es unas cuarenta y cinco veces más rápido.
+
+141
+00:07:44,429 --> 00:07:45,170
+Misión tres:
+
+142
+00:07:45,170 --> 00:07:46,405
+de la alerta al log.
+
+143
+00:07:46,405 --> 00:07:52,027
+Abran Prometheus desde la pestaña PORTS, puerto nueve mil noventa, y entren al menú Alerts.
+
+144
+00:07:52,027 --> 00:07:55,548
+Verán la regla TasaErroresAlta en rojo, en estado FIRING.
+
+145
+00:07:55,548 --> 00:07:56,042
+Ábranla:
+
+146
+00:07:56,042 --> 00:07:58,575
+está disparada para el endpoint de pagos.
+
+147
+00:07:59,375 --> 00:08:00,872
+Así está escrita la regla.
+
+148
+00:08:00,872 --> 00:08:05,999
+Divide las respuestas con error quinientos entre el total de respuestas de cada endpoint.
+
+149
+00:08:05,999 --> 00:08:09,282
+Si pasa del dos por ciento durante un minuto, se dispara.
+
+150
+00:08:09,282 --> 00:08:13,256
+Fíjense que alerta por un síntoma que siente el usuario, los errores,
+
+151
+00:08:13,256 --> 00:08:15,042
+y no por una causa como la CPU.
+
+152
+00:08:15,842 --> 00:08:18,841
+La alerta nos dice que algo falla, pero no por qué.
+
+153
+00:08:18,841 --> 00:08:21,782
+Para eso vamos a Loki y filtramos por nivel ERROR.
+
+154
+00:08:21,782 --> 00:08:23,665
+Todas las líneas dicen lo mismo:
+
+155
+00:08:23,665 --> 00:08:27,311
+error procesando pago, la pasarela de pagos respondió timeout.
+
+156
+00:08:27,311 --> 00:08:32,193
+El problema es de la dependencia externa, no de nuestra base de datos ni de la red.
+
+157
+00:08:32,993 --> 00:08:33,947
+Un truco extra:
+
+158
+00:08:33,947 --> 00:08:37,827
+con count over time pueden convertir los logs en una gráfica,
+
+159
+00:08:37,827 --> 00:08:40,561
+por ejemplo cuántos errores hay por minuto.
+
+160
+00:08:40,561 --> 00:08:42,914
+Así, métricas y logs se complementan.
+
+161
+00:08:42,914 --> 00:08:45,013
+La métrica avisa, el log explica.
+
+162
+00:08:45,813 --> 00:08:46,660
+Ahora el reto.
+
+163
+00:08:46,660 --> 00:08:52,045
+El proyecto trae una alerta de latencia basada en el p95 mayor a quinientos milisegundos,
+
+164
+00:08:52,045 --> 00:08:55,554
+y nunca se dispara, aunque hay pagos de casi dos segundos.
+
+165
+00:08:55,554 --> 00:08:57,430
+Vamos a crear una sobre el p99.
+
+166
+00:08:57,430 --> 00:09:01,242
+Abran el archivo alertas punto yml dentro de infra, prometheus,
+
+167
+00:09:01,242 --> 00:09:04,993
+y al final de la lista de reglas peguen esta regla de la guía.
+
+168
+00:09:04,993 --> 00:09:06,626
+Cuidado con la indentación:
+
+169
+00:09:06,626 --> 00:09:09,167
+debe quedar alineada con las otras reglas.
+
+170
+00:09:09,967 --> 00:09:15,081
+Guarden el archivo y, en la terminal, recarguen la configuración de Prometheus con este curl.
+
+171
+00:09:15,081 --> 00:09:16,676
+No hace falta reiniciar nada:
+
+172
+00:09:16,676 --> 00:09:19,315
+Prometheus vuelve a leer sus reglas en caliente.
+
+173
+00:09:20,115 --> 00:09:21,977
+Vuelvan a la página de alertas.
+
+174
+00:09:21,977 --> 00:09:27,561
+Su nueva regla, LatenciaP99Alta, primero aparece como Pending y, después de treinta segundos,
+
+175
+00:09:27,561 --> 00:09:28,402
+pasa a FIRING.
+
+176
+00:09:28,402 --> 00:09:29,062
+La lección:
+
+177
+00:09:29,062 --> 00:09:34,167
+el percentil que eligen para su objetivo de servicio decide qué problemas pueden ver.
+
+178
+00:09:34,967 --> 00:09:37,471
+Comparen sus números con los de referencia.
+
+179
+00:09:37,471 --> 00:09:42,713
+En pagos, un promedio de ciento tres milisegundos con un p99 de más de un segundo y medio,
+
+180
+00:09:42,713 --> 00:09:45,043
+y cerca de cuatro por ciento de errores.
+
+181
+00:09:45,043 --> 00:09:47,606
+En pedidos, ciento una consultas contra una.
+
+182
+00:09:47,606 --> 00:09:51,567
+Sus valores serán un poco distintos porque la latencia es aleatoria,
+
+183
+00:09:51,567 --> 00:09:53,606
+pero deben estar en el mismo orden.
+
+184
+00:09:54,406 --> 00:09:56,862
+Si algo no les funciona, revisen esto.
+
+185
+00:09:56,862 --> 00:09:58,090
+Connection refused:
+
+186
+00:09:58,090 --> 00:10:00,094
+la API todavía está arrancando.
+
+187
+00:10:00,094 --> 00:10:01,064
+Paneles vacíos:
+
+188
+00:10:01,064 --> 00:10:04,102
+verifiquen que lanzaron k6 y esperen un minuto.
+
+189
+00:10:04,102 --> 00:10:05,395
+Loki sin resultados:
+
+190
+00:10:05,395 --> 00:10:08,627
+los logs se envían por lotes, denle unos segundos.
+
+191
+00:10:08,627 --> 00:10:14,056
+Y si la alerta del reto no aparece, casi siempre es la indentación del archivo YAML.
+
+192
+00:10:14,856 --> 00:10:15,682
+Para terminar,
+
+193
+00:10:15,682 --> 00:10:22,877
+apaguen todo con docker compose down y detengan su codespace desde la página de GitHub para no gastar sus horas gratuitas.
+
+194
+00:10:22,877 --> 00:10:27,536
+Hoy encontraron una cola de latencia, un N más uno y una dependencia que falla,
+
+195
+00:10:27,536 --> 00:10:29,541
+solo con métricas, logs y alertas.
+
+196
+00:10:29,541 --> 00:10:30,839
+Eso es observabilidad.
+
+197
+00:10:30,839 --> 00:10:33,670
+¡Gracias, y nos vemos en la sesión de preguntas!

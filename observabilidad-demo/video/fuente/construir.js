@@ -35,6 +35,7 @@ li::before { content: ""; position: absolute; left: 0; top: 14px; width: 34px; h
 .captura { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 14px; background: #fff; box-shadow: 0 16px 50px rgba(0,40,100,.25); }
 .captura img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .nota { margin-top: 24px; font-size: 34px; font-weight: 600; color: #0b1f3a; background: #fff; border-left: 10px solid #005fc2; padding: 16px 26px; border-radius: 8px; }
+ul.densa li { font-size: 40px; margin: 16px 0; }
 .num { position: absolute; right: 60px; bottom: 30px; font-size: 26px; opacity: .6; }
 `;
 
@@ -49,7 +50,7 @@ function html(e, i) {
   if (e.tipo === 'lista') {
     return `<body class="azul"><div class="marco" style="justify-content:center">
       <div class="etiqueta">${esc(e.etiqueta)}</div><h2>${esc(e.titulo)}</h2>
-      <ul>${e.items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>${pie}</body>`;
+      <ul class="${e.items.length > 4 ? 'densa' : ''}">${e.items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>${pie}</body>`;
   }
   if (e.tipo === 'terminal') {
     const lineas = e.lineas.map(([p, t]) => p === '$' ? `<div><span class="p">$ </span><span class="cmd">${esc(t)}</span></div>`
@@ -85,19 +86,15 @@ escenas.forEach((e, i) => {
 console.log('imágenes listas');
 
 // 2) Narración con la voz en español de Windows
-const voces = escenas.map((e) => ({ id: e.id, texto: e.voz, wav: path.join(DIR, 'audio', `${e.id}.wav`) }));
-fs.writeFileSync(path.join(DIR, 'voces.json'), JSON.stringify(voces), 'utf8');
-const ps = `
-Add-Type -AssemblyName System.Speech
-$v = Get-Content -Raw -Encoding UTF8 '${path.join(DIR, 'voces.json')}' | ConvertFrom-Json
-$s = New-Object System.Speech.Synthesis.SpeechSynthesizer
-$s.SelectVoice('Microsoft Sabina Desktop')
-$s.Rate = 1
-foreach ($x in $v) { $s.SetOutputToWaveFile($x.wav); $s.Speak($x.texto) }
-$s.SetOutputToNull()
-`;
-fs.writeFileSync(path.join(DIR, 'voz.ps1'), '\ufeff' + ps, 'utf8');
-execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', path.join(DIR, 'voz.ps1')], { stdio: 'inherit' });
+// Voz neural local y gratuita: Piper (https://github.com/rhasspy/piper) con el modelo es_MX-claude-high.
+// Variables: PIPER_PYTHON (python con piper-tts instalado) y PIPER_MODEL (ruta al .onnx).
+const PY = process.env.PIPER_PYTHON || 'python';
+const MODELO = process.env.PIPER_MODEL || 'es_MX-claude-high.onnx';
+for (const e of escenas) {
+  const wav = path.join(DIR, 'audio', `${e.id}.wav`);
+  execFileSync(PY, ['-m', 'piper', '-m', MODELO, '-f', wav, '--sentence-silence', '0.35', '--length-scale', process.env.PIPER_LENGTH || '1.0'],
+    { input: e.voz, stdio: ['pipe', 'ignore', 'ignore'], env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' } });
+}
 console.log('narración lista');
 
 // 3) Segmentos de video + subtítulos
@@ -116,7 +113,8 @@ escenas.forEach((e, i) => {
     '-c:a', 'aac', '-b:a', '128k', '-ar', '44100', '-ac', '2', seg]);
   lista.push(`file '${seg.replace(/\\/g, '/')}'`);
   // subtítulos: partir la narración en frases y repartir el tiempo según su longitud
-  const frases = e.voz.match(/[^.!?:]+[.!?:]?/g).map((f) => f.trim()).filter(Boolean);
+  const frases = e.voz.match(/[^.!?:]+[.!?:]?/g).map((f) => f.trim()).filter(Boolean)
+    .flatMap((f) => f.length <= 95 ? [f] : f.split(/(?<=,) /).reduce((acc, p) => { const u = acc[acc.length - 1]; if (u && (u + ' ' + p).length <= 95) acc[acc.length - 1] = u + ' ' + p; else acc.push(p); return acc; }, []));
   const total = frases.reduce((a, f) => a + f.length, 0);
   let c = t;
   for (const f of frases) {

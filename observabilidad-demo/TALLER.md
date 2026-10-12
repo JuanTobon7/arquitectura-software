@@ -2,7 +2,7 @@
 
 **Duración:** 20 minutos · **Qué necesitas:** un navegador y una cuenta de GitHub (gratis). No hay que instalar nada.
 
-> **Video guía (4 min, narrado y con subtítulos):** [`video/taller-observabilidad.mp4`](video/taller-observabilidad.mp4).
+> **Video guía (10 min, narrado y con subtítulos):** [`video/taller-observabilidad.mp4`](video/taller-observabilidad.mp4).
 > Muestra cada paso de esta guía con capturas reales. Puedes pausarlo y seguirlo en paralelo.
 
 Vas a levantar una mini tienda en Spring Boot que tiene **tres problemas escondidos**. Tu misión es
