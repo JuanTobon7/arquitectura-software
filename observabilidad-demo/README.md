@@ -88,6 +88,13 @@ sum by (level) (count_over_time({app="api-demo"}[1m]))
 
 La alerta `TasaErroresAlta` se disparó para `/api/pagos`. Capturas en `resultados/capturas/`.
 
+## Taller y video guía
+
+- Guía paso a paso del taller: [TALLER.md](TALLER.md) (también en `presentacion/guia-taller-observabilidad.pdf`).
+- Video guía narrado: `video/taller-observabilidad.mp4` (subtítulos en `video/taller-observabilidad.srt`).
+  Se regenera con `node video/fuente/capturar.js` (con el stack y la carga corriendo) y
+  `node video/fuente/construir.js salida.mp4` (requiere Windows, Edge, ffmpeg y el paquete npm `jimp`).
+
 ## Apagar
 
 ```bash
