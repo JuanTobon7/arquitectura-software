@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Proyecto padre del cliente. Cada componente de la página "Cliente - Componentes"
+      del diagrama es un jar. Un módulo solo declara como dependencia los componentes
+      hacia los que el diagrama dibuja una flecha; ArquitecturaTest revisa además
+      los imports del código.
+      El módulo "inicio" arma la distribución en inicio/target/cliente-mensajeria/
+      y contiene todas las pruebas.
+    -->
+    <groupId>co.edu.mensajeria</groupId>
+    <artifactId>cliente-mensajeria-padre</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>Cliente de mensajería académica</name>
+
+    <modules>
+        <!-- 5. DTO -->
+        <module>dto</module>
+        <!-- 4. Servicios técnicos -->
+        <module>comunicacion</module>
+        <module>persistencia</module>
+        <!-- 3. Fachada -->
+        <module>fachada</module>
+        <!-- 2. Presentación (Swing) -->
+        <module>utilerias</module>
+        <module>vista</module>
+        <!-- 1. Inicio: arranque, distribución y pruebas -->
+        <module>inicio</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.11.3</junit.version>
+        <mockito.version>5.14.2</mockito.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- componentes del cliente -->
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-dto</artifactId><version>${project.version}</version></dependency>
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-comunicacion</artifactId><version>${project.version}</version></dependency>
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-persistencia</artifactId><version>${project.version}</version></dependency>
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-fachada</artifactId><version>${project.version}</version></dependency>
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-utilerias</artifactId><version>${project.version}</version></dependency>
+            <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-vista</artifactId><version>${project.version}</version></dependency>
+
+            <!-- terceros -->
+            <dependency><groupId>com.h2database</groupId><artifactId>h2</artifactId><version>2.3.232</version></dependency>
+            <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>${junit.version}</version></dependency>
+            <dependency><groupId>org.mockito</groupId><artifactId>mockito-junit-jupiter</artifactId><version>${mockito.version}</version></dependency>
+            <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><version>3.26.3</version></dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <!-- Sin pantalla: las pruebas de la vista solo usan componentes livianos -->
+                        <argLine>-Djava.awt.headless=true -XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                        <!-- Las pruebas están en el módulo "inicio": con -Dtest=... los demás módulos no deben fallar -->
+                        <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

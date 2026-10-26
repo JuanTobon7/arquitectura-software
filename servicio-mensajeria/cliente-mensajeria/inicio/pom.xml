@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>co.edu.mensajeria</groupId>
+        <artifactId>cliente-mensajeria-padre</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!--
+      Componente inicio: arranca el cliente. Contiene todas las pruebas y en "package"
+      arma la distribución lista para ejecutar o copiar a otro equipo:
+
+        target/cliente-mensajeria/
+          cliente-mensajeria.jar   Main-Class y Class-Path hacia componentes/ y lib/
+          componentes/             los 6 jars de los demás componentes del diagrama
+          lib/                     librerías de terceros (H2)
+          config/                  copia de ../config
+    -->
+    <artifactId>cliente-inicio</artifactId>
+    <name>Componente inicio: arranque, pruebas y distribución</name>
+
+    <properties>
+        <clase.principal>co.edu.mensajeria.cliente.inicio.InicioCliente</clase.principal>
+        <distribucion>${project.build.directory}/cliente-mensajeria</distribucion>
+        <componentes.diagrama>cliente-dto,cliente-comunicacion,cliente-persistencia,cliente-fachada,cliente-utilerias,cliente-vista</componentes.diagrama>
+    </properties>
+
+    <dependencies>
+        <!-- flechas del diagrama: InicioCliente usa LectorConfiguracion, las ventanas y FabricaCliente -->
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-dto</artifactId></dependency>
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-utilerias</artifactId></dependency>
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-vista</artifactId></dependency>
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-fachada</artifactId></dependency>
+        <!-- implementaciones que la fábrica crea: solo hacen falta al ejecutar (y en las pruebas) -->
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-comunicacion</artifactId><scope>runtime</scope></dependency>
+        <dependency><groupId>${project.groupId}</groupId><artifactId>cliente-persistencia</artifactId><scope>runtime</scope></dependency>
+
+        <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.mockito</groupId><artifactId>mockito-junit-jupiter</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.assertj</groupId><artifactId>assertj-core</artifactId><scope>test</scope></dependency>
+    </dependencies>
+
+    <build>
+        <finalName>cliente-mensajeria</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Class-Path del manifiesto: una propiedad para componentes/ y otra para lib/.
+                         Se separan con comas porque Maven recorta un separador de un solo espacio;
+                         build-helper cambia las comas por espacios más abajo. -->
+                    <execution>
+                        <id>classpath-componentes</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>build-classpath</goal></goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <includeArtifactIds>${componentes.diagrama}</includeArtifactIds>
+                            <prefix>componentes</prefix>
+                            <fileSeparator>/</fileSeparator>
+                            <pathSeparator>,</pathSeparator>
+                            <outputProperty>classpath.componentes</outputProperty>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>classpath-lib</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>build-classpath</goal></goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <excludeArtifactIds>${componentes.diagrama}</excludeArtifactIds>
+                            <prefix>lib</prefix>
+                            <fileSeparator>/</fileSeparator>
+                            <pathSeparator>,</pathSeparator>
+                            <outputProperty>classpath.lib</outputProperty>
+                        </configuration>
+                    </execution>
+                    <!-- copia de los jars a su carpeta en la distribución -->
+                    <execution>
+                        <id>copiar-componentes</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <includeArtifactIds>${componentes.diagrama}</includeArtifactIds>
+                            <outputDirectory>${distribucion}/componentes</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copiar-lib</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-dependencies</goal></goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <excludeArtifactIds>${componentes.diagrama}</excludeArtifactIds>
+                            <outputDirectory>${distribucion}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>classpath-del-manifiesto</id>
+                        <phase>prepare-package</phase>
+                        <goals><goal>regex-properties</goal></goals>
+                        <configuration>
+                            <regexPropertySettings>
+                                <!-- "a.jar,b.jar" → "a.jar b.jar": el espacio queda en medio del reemplazo y no se recorta -->
+                                <regexPropertySetting>
+                                    <name>manifiesto.componentes</name>
+                                    <value>${classpath.componentes}</value>
+                                    <regex>\.jar,(\S)</regex>
+                                    <replacement>.jar $1</replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </regexPropertySetting>
+                                <regexPropertySetting>
+                                    <name>manifiesto.lib</name>
+                                    <value>${classpath.lib}</value>
+                                    <regex>\.jar,(\S)</regex>
+                                    <replacement>.jar $1</replacement>
+                                    <failIfNoMatch>false</failIfNoMatch>
+                                </regexPropertySetting>
+                            </regexPropertySettings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>${distribucion}</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>${clase.principal}</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>${manifiesto.componentes} ${manifiesto.lib}</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copiar-configuracion</id>
+                        <phase>package</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${distribucion}/config</outputDirectory>
+                            <resources>
+                                <resource><directory>${project.basedir}/../config</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
