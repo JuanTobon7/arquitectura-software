@@ -2,8 +2,6 @@
 
 **Duración:** 20 minutos · **Qué necesitas:** un navegador y una cuenta de GitHub (gratis). No hay que instalar nada.
 
-> **Video guía (10 min, narrado y con subtítulos):** [`video/taller-observabilidad.mp4`](video/taller-observabilidad.mp4).
-> Muestra cada paso de esta guía con capturas reales. Puedes pausarlo y seguirlo en paralelo.
 
 Vas a levantar una mini tienda en Spring Boot que tiene **tres problemas escondidos**. Tu misión es
 encontrarlos usando solo la telemetría: métricas en Prometheus, logs en Loki y el dashboard de Grafana.
@@ -22,7 +20,7 @@ encontrarlos usando solo la telemetría: métricas en Prometheus, logs en Loki y
 ### Opción A: GitHub Codespaces (recomendada, nada que instalar)
 
 1. Abre este enlace con tu cuenta de GitHub:
-   **https://codespaces.new/JuanTobon7/arquitectura-software?devcontainer_path=.devcontainer/observabilidad/devcontainer.json**
+   **https://codespaces.new/JuanTobon7/arquitectura-software/tree/claude/project-thread-ga3dib?devcontainer_path=.devcontainer/observabilidad/devcontainer.json**
 2. Pulsa **Create codespace** y espera a que cargue VS Code en el navegador (1-2 min la primera vez).
 3. En la terminal de abajo (ya está en la carpeta `observabilidad-demo`) ejecuta:
 

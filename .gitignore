@@ -1,3 +1,5 @@
 .idea/
 data/
 **/target/
+# Videos del taller: se comparten aparte, no van en el repo
+observabilidad-demo/video/
