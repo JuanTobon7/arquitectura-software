@@ -91,6 +91,7 @@ La alerta `TasaErroresAlta` se disparó para `/api/pagos`. Capturas en `resultad
 ## Taller
 
 Guía paso a paso: [TALLER.md](TALLER.md) (también en `presentacion/guia-taller-observabilidad.pdf`).
+Diapositivas del taller: `presentacion/taller-observabilidad.pdf` y `.pptx`.
 
 ## Apagar
 

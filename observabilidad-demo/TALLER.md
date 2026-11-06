@@ -44,7 +44,7 @@ encontrarlos usando solo la telemetría: métricas en Prometheus, logs en Loki y
 ### Opción B: Docker Desktop en tu computador
 
 ```bash
-git clone https://github.com/JuanTobon7/arquitectura-software.git
+git clone -b claude/project-thread-ga3dib https://github.com/JuanTobon7/arquitectura-software.git
 cd arquitectura-software/observabilidad-demo
 docker compose up -d --build
 ```
