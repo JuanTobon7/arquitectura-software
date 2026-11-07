@@ -1,13 +1,12 @@
 # Observabilidad en Spring Boot: Prometheus + Loki + Grafana
 
 Mini API Spring Boot instrumentada con Actuator, Micrometer y logs JSON enviados a Loki, más un stack
-Prometheus / Loki / Grafana con datasources y dashboard ya provisionados. Sirve como demo para la
-presentación de la carpeta `presentacion/`.
+Prometheus / Loki / Grafana con datasources y dashboard ya provisionados.
 
 ## Requisitos
 
 - Docker Desktop (la API se compila dentro de Docker con Maven y JDK 21, no hace falta Java local)
-- Node.js (solo para `resultados/recolectar.js` y `presentacion/generar-deck.js`)
+- Node.js (solo para `resultados/recolectar.js`)
 
 ## Levantar
 
@@ -87,11 +86,6 @@ sum by (level) (count_over_time({app="api-demo"}[1m]))
 | Consultas SQL por request       | 0          | 101                  | 1                       |
 
 La alerta `TasaErroresAlta` se disparó para `/api/pagos`. Capturas en `resultados/capturas/`.
-
-## Taller
-
-Guía paso a paso: [TALLER.md](TALLER.md) (también en `presentacion/guia-taller-observabilidad.pdf`).
-Diapositivas del taller: `presentacion/taller-observabilidad.pdf` y `.pptx`.
 
 ## Apagar
 

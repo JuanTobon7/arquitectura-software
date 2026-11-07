@@ -3,3 +3,7 @@ data/
 **/target/
 # Videos del taller: se comparten aparte, no van en el repo
 observabilidad-demo/video/
+# Material de la exposición y del taller: se comparte aparte, no va en el repo
+observabilidad-demo/presentacion/
+observabilidad-demo/TALLER.md
+observabilidad-demo/ACRONIMOS.md
