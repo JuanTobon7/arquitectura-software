@@ -19,6 +19,7 @@ docker compose up -d --build
 | API        | http://localhost:8080                 |
 | Prometheus | http://localhost:9090 (ver *Alerts*)  |
 | Loki       | http://localhost:3100                 |
+| Tempo      | http://localhost:3200 (trazas)        |
 | Grafana    | http://localhost:3000 (sin login)     |
 
 El dashboard **API Demo - Observabilidad** es la página de inicio de Grafana.
@@ -75,6 +76,17 @@ LogQL:
 {app="api-demo"} | json | mdc_duracion_ms > 1000
 sum by (level) (count_over_time({app="api-demo"}[1m]))
 ```
+
+TraceQL (Grafana → Explore → Tempo):
+
+```traceql
+{ name = "llamada a pasarela de pagos" && duration > 1s }   # pagos lentos
+{ status = error }                                          # pagos fallidos
+{ name = "http get /api/pedidos/n-mas-1" }                  # 101 spans de consulta
+```
+
+Las trazas salen de Micrometer Tracing + OpenTelemetry (OTLP a Tempo). Cada log en Loki lleva su
+`traceId`, y Grafana enlaza log → traza y span → logs.
 
 ## Resultados de la corrida (12-oct-2026, 4 min, 9.603 requests)
 

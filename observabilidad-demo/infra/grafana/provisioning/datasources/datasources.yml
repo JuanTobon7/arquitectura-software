@@ -13,3 +13,27 @@ datasources:
     type: loki
     access: proxy
     url: http://loki:3100
+    jsonData:
+      # Del traceId de un log se salta a su traza en Tempo
+      derivedFields:
+        - name: traceId
+          matcherRegex: '"traceId":"(\w+)"'
+          url: '$${__value.raw}'
+          datasourceUid: tempo
+
+  - name: Tempo
+    uid: tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      # De un span se salta a los logs de esa traza en Loki
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-1m'
+        spanEndTimeShift: '1m'
+        filterByTraceID: false
+        customQuery: true
+        query: '{app="api-demo"} | json | mdc_traceId="$${__trace.traceId}"'
+      serviceMap:
+        datasourceUid: prometheus

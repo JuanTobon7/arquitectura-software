@@ -68,7 +68,10 @@ public class FiltroObservabilidad extends OncePerRequestFilter {
                 log.info("request {} {} -> {} en {} ms ({} consultas SQL)",
                         request.getMethod(), uri, response.getStatus(), duracionMs, consultas);
             }
-            MDC.clear();
+            // Se quitan solo las claves propias: traceId y spanId los maneja Micrometer Tracing
+            for (String clave : new String[]{"request_id", "uri", "metodo", "status", "duracion_ms", "sql_consultas"}) {
+                MDC.remove(clave);
+            }
         }
     }
 }

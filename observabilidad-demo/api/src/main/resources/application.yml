@@ -32,6 +32,17 @@ management:
       percentiles-histogram:
         http.server.requests: true
         sql.consultas.por.request: true
+  tracing:
+    sampling:
+      probability: 1.0   # demo: se guardan todas las trazas (en producción, p. ej. 0.1)
+  otlp:
+    tracing:
+      endpoint: ${OTLP_URL:http://localhost:4318/v1/traces}
+
+jdbc:
+  includes: connection, query   # un span por conexión y por consulta
+  datasource-proxy:
+    include-parameter-values: false
 
 loki:
   url: http://localhost:3100/loki/api/v1/push

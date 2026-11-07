@@ -50,6 +50,21 @@
             <artifactId>loki-logback-appender</artifactId>
             <version>1.5.2</version>
         </dependency>
+        <!-- Trazas: Micrometer Tracing con OpenTelemetry, exportadas por OTLP a Tempo -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-exporter-otlp</artifactId>
+        </dependency>
+        <!-- Un span por cada consulta JDBC -->
+        <dependency>
+            <groupId>net.ttddyy.observation</groupId>
+            <artifactId>datasource-micrometer-spring-boot</artifactId>
+            <version>1.1.1</version>
+        </dependency>
     </dependencies>
 
     <build>

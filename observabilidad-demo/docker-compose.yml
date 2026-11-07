@@ -6,8 +6,20 @@ services:
       - "8080:8080"
     environment:
       LOKI_URL: http://loki:3100/loki/api/v1/push
+      OTLP_URL: http://tempo:4318/v1/traces
     depends_on:
       - loki
+      - tempo
+
+  tempo:
+    image: grafana/tempo:2.8.2
+    container_name: tempo
+    user: "0"
+    command: -config.file=/etc/tempo/tempo.yml
+    volumes:
+      - ./infra/tempo:/etc/tempo:ro
+    ports:
+      - "3200:3200"
 
   prometheus:
     image: prom/prometheus:v3.5.0
@@ -43,6 +55,7 @@ services:
     depends_on:
       - prometheus
       - loki
+      - tempo
 
   # Generador de carga: docker compose --profile carga run --rm k6
   k6:

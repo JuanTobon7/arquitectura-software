@@ -2,6 +2,8 @@ package co.edu.demo.observabilidad;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,17 +22,30 @@ public class PagoController {
     private final Counter pagosAprobados;
     private final Counter pagosFallidos;
 
-    public PagoController(MeterRegistry registry) {
+    private final ObservationRegistry observaciones;
+
+    public PagoController(MeterRegistry registry, ObservationRegistry observaciones) {
         this.pagosAprobados = Counter.builder("pagos.procesados").tag("resultado", "aprobado").register(registry);
         this.pagosFallidos = Counter.builder("pagos.procesados").tag("resultado", "fallido").register(registry);
+        this.observaciones = observaciones;
+    }
+
+    @PostMapping("/pagos")
+    public Map<String, Object> pagar() throws InterruptedException {
+        // Span manual: la llamada a la pasarela aparece como un hijo dentro de la traza del request
+        long espera = Observation.createNotStarted("pasarela.cobrar", observaciones)
+                .contextualName("llamada a pasarela de pagos")
+                .lowCardinalityKeyValue("dependencia", "pasarela-pagos")
+                .observeChecked(this::llamarPasarela);
+        pagosAprobados.increment();
+        return Map.of("estado", "aprobado", "latencia_pasarela_ms", espera);
     }
 
     /**
      * Latencia simulada de una pasarela externa:
      * 90% rápida (20-80 ms), 8% lenta (200-500 ms), 2% muy lenta (1.2-2 s) y 4% de errores.
      */
-    @PostMapping("/pagos")
-    public Map<String, Object> pagar() throws InterruptedException {
+    private long llamarPasarela() throws InterruptedException {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         double suerte = random.nextDouble();
         long espera;
@@ -47,8 +62,7 @@ public class PagoController {
             pagosFallidos.increment();
             throw new PasarelaException("La pasarela de pagos respondio timeout");
         }
-        pagosAprobados.increment();
-        return Map.of("estado", "aprobado", "latencia_pasarela_ms", espera);
+        return espera;
     }
 
     /** Endpoint sano de referencia. */
