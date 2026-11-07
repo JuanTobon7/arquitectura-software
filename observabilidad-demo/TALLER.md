@@ -21,7 +21,7 @@ encontrarlos usando solo la telemetría: métricas en Prometheus, logs en Loki y
 
 1. Abre este enlace con tu cuenta de GitHub:
    **https://codespaces.new/JuanTobon7/arquitectura-software/tree/claude/project-thread-ga3dib?devcontainer_path=.devcontainer/observabilidad/devcontainer.json**
-2. Pulsa **Create codespace** y espera a que cargue VS Code en el navegador (1-2 min la primera vez).
+2. Pulsa **Create codespace** y espera a que cargue VS Code en el navegador (unos minutos la primera vez). Si pregunta si confías en los autores de la carpeta, acepta.
 3. En la terminal de abajo (ya está en la carpeta `observabilidad-demo`) ejecuta:
 
    ```bash
@@ -77,6 +77,8 @@ En Grafana abre el dashboard **API Demo - Observabilidad** (es la página de ini
 ---
 
 ## 3. Tres misiones (6-16 min)
+
+> **El tráfico dura 6 minutos.** Si termina antes de la misión 3 o del reto, vuelve a lanzar el comando de k6 y espera un minuto.
 
 Para escribir consultas usa **Grafana → Explore** (icono de brújula en el menú izquierdo, o `/explore` en la URL).
 Arriba a la izquierda eliges la fuente de datos: **Prometheus** para métricas (PromQL) o **Loki** para logs (LogQL).
