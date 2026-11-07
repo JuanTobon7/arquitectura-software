@@ -60,10 +60,10 @@ Grafana queda en http://localhost:3000 y Prometheus en http://localhost:9090.
 En la terminal:
 
 ```bash
-DURACION=6m docker compose --profile carga run -d --rm k6
+DURACION=20m docker compose --profile carga run -d --rm k6
 ```
 
-Esto lanza [k6](https://k6.io) en segundo plano: unas 40 peticiones por segundo durante 6 minutos contra cuatro endpoints:
+Esto lanza [k6](https://k6.io) en segundo plano: unas 40 peticiones por segundo durante 20 minutos, todo el taller, contra cuatro endpoints:
 
 | Endpoint                      | Qué hace                                  |
 |-------------------------------|-------------------------------------------|
@@ -77,8 +77,6 @@ En Grafana abre el dashboard **API Demo - Observabilidad** (es la página de ini
 ---
 
 ## 3. Tres misiones (6-16 min)
-
-> **El tráfico dura 6 minutos.** Si termina antes de la misión 3 o del reto, vuelve a lanzar el comando de k6 y espera un minuto.
 
 Para escribir consultas usa **Grafana → Explore** (icono de brújula en el menú izquierdo, o `/explore` en la URL).
 Arriba a la izquierda eliges la fuente de datos: **Prometheus** para métricas (PromQL) o **Loki** para logs (LogQL).
