@@ -17,7 +17,8 @@ datasources:
       # Del traceId de un log se salta a su traza en Tempo
       derivedFields:
         - name: traceId
-          matcherRegex: '"traceId":"(\w+)"'
+          # loki4j escribe el MDC con prefijo: "mdc_traceId":"..."
+          matcherRegex: 'traceId":"(\w+)"'
           url: '$${__value.raw}'
           datasourceUid: tempo
 
