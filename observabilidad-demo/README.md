@@ -22,7 +22,7 @@ docker compose up -d --build
 | Tempo      | http://localhost:3200 (trazas)        |
 | Grafana    | http://localhost:3000 (sin login)     |
 
-El dashboard **API Demo - Observabilidad** es la página de inicio de Grafana.
+El dashboard **API Demo - Observabilidad** es la página de inicio de Grafana. Su primera fila muestra las alertas de Prometheus (historial y activas).
 
 ## Endpoints
 

@@ -15,12 +15,212 @@
   },
   "panels": [
     {
+      "id": 13,
+      "type": "row",
+      "title": "Alertas (Prometheus)",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 14,
+      "type": "state-timeline",
+      "title": "Historial de alertas (rojo = FIRING, ámbar = PENDING)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Reglas de infra/prometheus/alertas.yml. PENDING: la condición se cumple pero aún no pasa 1 minuto. FIRING: alerta disparada.",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 16,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "text": "PENDING",
+                  "color": "orange",
+                  "index": 0
+                },
+                "2": {
+                  "text": "FIRING",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never",
+        "mergeValues": true,
+        "rowHeight": 0.8,
+        "alignValue": "center",
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "legendFormat": "{{alertname}} · {{uri}}",
+          "expr": "(max by (alertname, uri) (ALERTS{alertstate=\"firing\"}) * 2) or max by (alertname, uri) (ALERTS{alertstate=\"pending\"})"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "table",
+      "title": "Alertas activas ahora",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 1,
+        "w": 8,
+        "h": 8
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "left"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Estado"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "firing": {
+                        "text": "FIRING",
+                        "color": "red",
+                        "index": 0
+                      },
+                      "pending": {
+                        "text": "PENDING",
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Value": true,
+              "__name__": true,
+              "application": true,
+              "instance": true,
+              "job": true
+            },
+            "indexByName": {
+              "alertname": 0,
+              "uri": 1,
+              "severity": 2,
+              "alertstate": 3
+            },
+            "renameByName": {
+              "alertname": "Alerta",
+              "uri": "Endpoint",
+              "severity": "Severidad",
+              "alertstate": "Estado"
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "expr": "ALERTS"
+        }
+      ]
+    },
+    {
       "id": 1,
       "type": "row",
       "title": "RED: Rate, Errors, Duration",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 9,
         "w": 24,
         "h": 1
       },
@@ -37,7 +237,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 1,
+        "y": 10,
         "w": 12,
         "h": 8
       },
@@ -88,7 +288,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 1,
+        "y": 10,
         "w": 12,
         "h": 8
       },
@@ -139,7 +339,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 9,
+        "y": 18,
         "w": 12,
         "h": 8
       },
@@ -206,7 +406,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 9,
+        "y": 18,
         "w": 12,
         "h": 8
       },
@@ -253,7 +453,7 @@
       "title": "USE: recursos de la JVM",
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 26,
         "w": 24,
         "h": 1
       },
@@ -270,7 +470,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 18,
+        "y": 27,
         "w": 8,
         "h": 7
       },
@@ -331,7 +531,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 18,
+        "y": 27,
         "w": 8,
         "h": 7
       },
@@ -392,7 +592,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 18,
+        "y": 27,
         "w": 8,
         "h": 7
       },
@@ -439,7 +639,7 @@
       "title": "Logs (Loki)",
       "gridPos": {
         "x": 0,
-        "y": 25,
+        "y": 34,
         "w": 24,
         "h": 1
       },
@@ -456,7 +656,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 26,
+        "y": 35,
         "w": 8,
         "h": 9
       },
@@ -506,7 +706,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 26,
+        "y": 35,
         "w": 16,
         "h": 9
       },
