@@ -42,7 +42,36 @@ el N+1 no se notaría.
 docker compose --profile carga run --rm k6
 ```
 
-Corre 4 minutos (cambiar con `DURACION=2m`) y deja el resumen en `resultados/k6-resumen.json`.
+Corre 4 minutos y deja el resumen en `resultados/k6-resumen.json`. Todo se ajusta desde la terminal
+con `-e VARIABLE=valor` (detalle al inicio de `carga/carga.js`):
+
+| Variable | Qué hace | Por defecto |
+|----------|----------|-------------|
+| `DURACION` | Duración de cada escenario | `4m` |
+| `ENDPOINTS` | Escenarios a correr: `pagos,catalogo,n-mas-1,optimizado` | todos |
+| `FACTOR` | Multiplica las tasas base (20, 10, 5 y 5 req/s) | `1` |
+| `RPS_PAGOS`, `RPS_CATALOGO`, `RPS_N_MAS_1`, `RPS_OPTIMIZADO` | Tasa fija de un endpoint | base × `FACTOR` |
+| `MAX_VUS` | Tope de usuarios virtuales para sostener la tasa | `100` |
+| `USUARIOS` | Cambia a modo usuarios concurrentes (por escenario, sin pausa) | sin definir |
+| `ITERACIONES` | Con `USUARIOS`: peticiones por usuario y termina | sin definir |
+| `RAMPA` | Con `USUARIOS`: sube de 0 a `USUARIOS` en ese tiempo | sin definir |
+
+```bash
+# 5 veces el tráfico normal (unas 200 req/s)
+docker compose --profile carga run --rm -e FACTOR=5 k6
+
+# Colapsar el N+1: 200 usuarios concurrentes solo contra /api/pedidos/n-mas-1
+docker compose --profile carga run --rm -e ENDPOINTS=n-mas-1 -e USUARIOS=200 -e DURACION=2m k6
+
+# Lo mismo con el endpoint corregido, para comparar
+docker compose --profile carga run --rm -e ENDPOINTS=optimizado -e USUARIOS=200 -e DURACION=2m k6
+
+# Rampa: de 0 a 300 usuarios en 1 minuto y se sostiene 3 minutos
+docker compose --profile carga run --rm -e ENDPOINTS=n-mas-1 -e USUARIOS=300 -e RAMPA=1m -e DURACION=3m k6
+```
+
+Para ver k6 en vivo en el navegador (http://localhost:5665), añade
+`-p 5665:5665 -e K6_WEB_DASHBOARD=true -e K6_WEB_DASHBOARD_HOST=0.0.0.0`.
 
 ## Recolectar resultados
 
