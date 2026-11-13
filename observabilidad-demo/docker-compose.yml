@@ -65,6 +65,14 @@ services:
     environment:
       BASE_URL: http://api:8080
       DURACION: ${DURACION:-4m}
+      # Dashboard web de k6 en vivo: http://localhost:5665 (requiere --service-ports)
+      K6_WEB_DASHBOARD: "true"
+      K6_WEB_DASHBOARD_HOST: 0.0.0.0
+      K6_WEB_DASHBOARD_PERIOD: 2s
+      # Al terminar deja el mismo dashboard como reporte HTML
+      K6_WEB_DASHBOARD_EXPORT: /resultados/k6-reporte.html
+    ports:
+      - "5665:5665"
     volumes:
       - ./carga:/scripts
       - ./resultados:/resultados

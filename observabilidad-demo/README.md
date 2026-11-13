@@ -70,8 +70,12 @@ docker compose --profile carga run --rm -e ENDPOINTS=optimizado -e USUARIOS=200 
 docker compose --profile carga run --rm -e ENDPOINTS=n-mas-1 -e USUARIOS=300 -e RAMPA=1m -e DURACION=3m k6
 ```
 
-Para ver k6 en vivo en el navegador (http://localhost:5665), añade
-`-p 5665:5665 -e K6_WEB_DASHBOARD=true -e K6_WEB_DASHBOARD_HOST=0.0.0.0`.
+El dashboard web de k6 viene activado: añade `--service-ports` al comando y abre
+http://localhost:5665 para ver la carga en vivo. Al terminar queda el reporte en `resultados/k6-reporte.html`.
+
+```bash
+docker compose --profile carga run --rm --service-ports -e ENDPOINTS=n-mas-1 -e USUARIOS=200 -e DURACION=2m k6
+```
 
 ## Recolectar resultados
 
